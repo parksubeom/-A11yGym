@@ -116,13 +116,15 @@ export function PreviewPanel({ code, className }: PreviewPanelProps) {
         setIsLoading(false)
       }
 
-      iframeWindow.addEventListener('error', errorHandler)
-      iframeWindow.addEventListener('unhandledrejection', (event) => {
+      const unhandledRejectionHandler = (event: PromiseRejectionEvent) => {
         setError({
           message: event.reason?.message || 'Promise가 거부되었습니다.',
         })
         setIsLoading(false)
-      })
+      }
+
+      iframeWindow.addEventListener('error', errorHandler)
+      iframeWindow.addEventListener('unhandledrejection', unhandledRejectionHandler)
 
       // iframe 문서 초기화
       iframeDoc.open()
@@ -153,6 +155,7 @@ export function PreviewPanel({ code, className }: PreviewPanelProps) {
       // cleanup
       return () => {
         iframeWindow.removeEventListener('error', errorHandler)
+        iframeWindow.removeEventListener('unhandledrejection', unhandledRejectionHandler)
       }
     } catch (err) {
       const errorInfo: ErrorInfo = {
@@ -172,28 +175,30 @@ export function PreviewPanel({ code, className }: PreviewPanelProps) {
           </div>
         )}
 
-        {error ? (
-          <div className="flex h-full items-center justify-center p-8">
-            <div className="text-center">
-              <AlertCircle
-                className="mx-auto mb-4 h-12 w-12 text-destructive"
-                aria-hidden="true"
-              />
-              <h3 className="mb-2 text-lg font-semibold">렌더링 오류</h3>
-              <p className="text-sm text-muted-foreground" role="alert">
-                {error.message}
-              </p>
+        <ErrorBoundary onError={setError}>
+          {error ? (
+            <div className="flex h-full items-center justify-center p-8">
+              <div className="text-center">
+                <AlertCircle
+                  className="mx-auto mb-4 h-12 w-12 text-destructive"
+                  aria-hidden="true"
+                />
+                <h3 className="mb-2 text-lg font-semibold">렌더링 오류</h3>
+                <p className="text-sm text-muted-foreground" role="alert">
+                  {error.message}
+                </p>
+              </div>
             </div>
-          </div>
-        ) : (
-          <iframe
-            ref={iframeRef}
-            title="코드 미리보기"
-            className="h-full w-full border-0"
-            sandbox="allow-scripts allow-same-origin"
-            aria-label="사용자가 작성한 코드의 렌더링 결과를 표시합니다"
-          />
-        )}
+          ) : (
+            <iframe
+              ref={iframeRef}
+              title="코드 미리보기"
+              className="h-full w-full border-0"
+              sandbox="allow-scripts allow-same-origin"
+              aria-label="사용자가 작성한 코드의 렌더링 결과를 표시합니다"
+            />
+          )}
+        </ErrorBoundary>
       </div>
     </div>
   )
