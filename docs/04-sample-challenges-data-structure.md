@@ -98,4 +98,14 @@ console.log(challenge.title, challenge.guidelineCode)
 - `guidelineCode`(1.1.1 등)와 CSV 체크리스트(code=1~33) 간 매핑 테이블 추가
 - 챌린지를 KWCAG 지침 상세(설명/주의사항/예시 코드)와 연결
 
+## 커밋 메시지(복붙용)
+
+```text
+feat: 실습용 챌린지 샘플 데이터 추가
+
+- 챌린지 데이터 타입 및 검증 규칙(정규식) 정의
+- 접근성 오류 케이스 기반 샘플 3종 추가(1.1.1/2.1.1/3.3.2)
+- 페이즈 문서화 추가(docs/04-sample-challenges-data-structure.md)
+```
+
 
