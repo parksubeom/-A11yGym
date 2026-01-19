@@ -72,10 +72,16 @@ export default function ChallengePage() {
   // 최초 진입 시 기본 코드 세팅 (persist된 userCode가 비어있을 때만)
   useEffect(() => {
     if (!challenge) return
+    const nextCode = userCode.trim().length === 0 ? challenge.initialCode : userCode
+
+    // 에디터/프리뷰 모두 "현재 세션의 코드"를 기준으로 시작하게 맞춘다.
+    // - persist된 userCode가 있으면 그걸 복원
+    // - 없으면 initialCode로 시작
     if (userCode.trim().length === 0) {
-      setUserCode(challenge.initialCode)
-      setPreviewCode(challenge.initialCode)
+      setUserCode(nextCode)
     }
+    setPreviewCode(nextCode)
+
     // 챌린지 변경 시 testResult 초기화
     setTestResult({ status: 'idle' })
     // eslint-disable-next-line react-hooks/exhaustive-deps
