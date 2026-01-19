@@ -1,0 +1,10 @@
+﻿const fs = require('fs');
+const p = '.next/static/chunks/app/layout.js';
+const b = fs.readFileSync(p);
+let nul = 0;
+for (let i = 0; i < b.length; i++) if (b[i] === 0) nul++;
+const s = b.toString('utf8');
+console.log('bytes', b.length);
+console.log('nulBytes', nul);
+console.log('u2028', s.indexOf('\u2028'));
+console.log('u2029', s.indexOf('\u2029'));

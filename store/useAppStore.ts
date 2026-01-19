@@ -1,5 +1,6 @@
 import { create } from "zustand"
 import { createJSONStorage, persist } from "zustand/middleware"
+import type { StateStorage } from "zustand/middleware"
 
 export type EditorTab = "editor" | "preview"
 
@@ -152,9 +153,15 @@ export const useAppStore = create<AppState>()(
     }),
     {
       name: "a11y-training-platform:app-store",
-      storage: createJSONStorage(() =>
-        typeof window !== "undefined" ? window.localStorage : undefined
-      ),
+      storage: createJSONStorage(() => {
+        // SSR 안전: 서버에서는 no-op storage를 사용해 타입/런타임 모두 안전하게 처리
+        const noopStorage: StateStorage = {
+          getItem: () => null,
+          setItem: () => {},
+          removeItem: () => {},
+        }
+        return typeof window !== "undefined" ? window.localStorage : noopStorage
+      }),
       partialize: (state) => ({
         userCode: state.userCode,
       }),

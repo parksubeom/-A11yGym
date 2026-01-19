@@ -1,0 +1,10 @@
+﻿const fs=require('fs');
+const p='.next/static/chunks/app/layout.js';
+const text=fs.readFileSync(p,'utf8');
+const lines=text.split(/\r?\n/);
+console.log('totalLines', lines.length);
+const n=70;
+const line=lines[n-1]||'';
+console.log('line70Len', line.length);
+console.log('line70Snippet', JSON.stringify(line.slice(0,120)));
+console.log('col29-60', JSON.stringify(line.slice(28,60)));

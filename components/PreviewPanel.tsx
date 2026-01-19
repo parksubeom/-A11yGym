@@ -79,9 +79,63 @@ class ErrorBoundary extends React.Component<
 }
 
 /**
+ * React JSX 코드를 HTML로 변환하는 유틸리티
+ * - onClick={...} → onclick="..."
+ * - tabIndex={0} → tabindex="0"
+ * - htmlFor → for
+ * - className → class
+ * - 기타 React 속성을 HTML 속성으로 변환
+ */
+function convertReactJSXToHTML(code: string): string {
+  let html = code
+
+  // className → class
+  html = html.replace(/\bclassName\s*=\s*["']([^"']+)["']/g, 'class="$1"')
+  html = html.replace(/\bclassName\s*=\s*\{["']([^"']+)["']\}/g, 'class="$1"')
+
+  // htmlFor → for
+  html = html.replace(/\bhtmlFor\s*=\s*["']([^"']+)["']/g, 'for="$1"')
+  html = html.replace(/\bhtmlFor\s*=\s*\{["']([^"']+)["']\}/g, 'for="$1"')
+
+  // tabIndex={0} 또는 tabIndex="0" → tabindex="0"
+  html = html.replace(/\btabIndex\s*=\s*\{0\}/g, 'tabindex="0"')
+  html = html.replace(/\btabIndex\s*=\s*["']0["']/g, 'tabindex="0"')
+  html = html.replace(/\btabIndex\s*=\s*\{-1\}/g, 'tabindex="-1"')
+  html = html.replace(/\btabIndex\s*=\s*["']-1["']/g, 'tabindex="-1"')
+
+  // onClick → onclick (간단한 함수만 처리)
+  // onClick={() => alert("...")} → onclick="alert('...')"
+  html = html.replace(
+    /\bonClick\s*=\s*\{\(\)\s*=>\s*alert\(["']([^"']+)["']\)\}/g,
+    'onclick="alert(\'$1\')"'
+  )
+  // onClick={() => ...} → onclick="..." (일반적인 경우는 주석 처리)
+  html = html.replace(/\bonClick\s*=\s*\{[^}]+\}/g, (match) => {
+    // 복잡한 함수는 제거하고 주석으로 표시
+    return '<!-- onClick handler removed (not supported in HTML) -->'
+  })
+
+  // onKeyDown → onkeydown (간단한 경우만)
+  html = html.replace(/\bonKeyDown\s*=\s*\{[^}]+\}/g, (match) => {
+    // 복잡한 함수는 제거
+    return '<!-- onKeyDown handler removed (not supported in HTML) -->'
+  })
+
+  // 자체 닫힘 태그 처리: <img /> → <img>
+  html = html.replace(/<(\w+)([^>]*)\s*\/>/g, '<$1$2>')
+
+  // 중괄호로 감싸진 문자열 속성 처리: {0} → "0"
+  html = html.replace(/\{(\d+)\}/g, '"$1"')
+  html = html.replace(/\{["']([^"']+)["']\}/g, '"$1"')
+
+  return html
+}
+
+/**
  * 코드를 안전하게 렌더링하는 미리보기 패널
  * - iframe을 사용하여 사용자 코드를 격리된 환경에서 실행
  * - Error Boundary로 런타임 에러 처리
+ * - React JSX 코드를 HTML로 변환하여 렌더링
  */
 export function PreviewPanel({ code, className }: PreviewPanelProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null)
@@ -96,6 +150,9 @@ export function PreviewPanel({ code, className }: PreviewPanelProps) {
     setError(null)
 
     try {
+      // React JSX를 HTML로 변환
+      const htmlCode = convertReactJSXToHTML(code)
+
       // iframe 내부 문서에 코드 주입
       const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document
       if (!iframeDoc) {
@@ -138,10 +195,15 @@ export function PreviewPanel({ code, className }: PreviewPanelProps) {
             <style>
               * { margin: 0; padding: 0; box-sizing: border-box; }
               body { font-family: system-ui, -apple-system, sans-serif; padding: 16px; }
+              button, [role="button"] { cursor: pointer; padding: 8px 16px; border: 1px solid #ccc; border-radius: 4px; background: #f0f0f0; }
+              button:hover, [role="button"]:hover { background: #e0e0e0; }
+              button:focus, [role="button"]:focus { outline: 2px solid #0066cc; outline-offset: 2px; }
+              input, textarea { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+              label { display: block; margin-bottom: 4px; font-weight: 500; }
             </style>
           </head>
           <body>
-            ${code}
+            ${htmlCode}
           </body>
         </html>
       `)

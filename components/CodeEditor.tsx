@@ -81,7 +81,7 @@ export function CodeEditor({
           highlight={highlight}
           padding={16}
           textareaId={id}
-          textareaRef={(el) => {
+          textareaRef={(el: HTMLTextAreaElement) => {
             textareaRef.current = el
           }}
           readOnly={readOnly}
@@ -95,7 +95,7 @@ export function CodeEditor({
             spellCheck: false,
             autoCapitalize: 'off',
             autoCorrect: 'off',
-            onKeyDown: (e) => {
+            onKeyDown: (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
               // 키보드 트랩 방지: ESC로 포커스 탈출
               if (enableEscapeToBlur && e.key === 'Escape') {
                 e.preventDefault()

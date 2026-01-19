@@ -2,8 +2,10 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'next/navigation'
+import Link from 'next/link'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import { Home } from 'lucide-react'
 
 import { CodeEditor } from '@/components/CodeEditor'
 import { HintPanel, type HintLevel } from '@/components/HintPanel'
@@ -74,6 +76,8 @@ export default function ChallengePage() {
       setUserCode(challenge.initialCode)
       setPreviewCode(challenge.initialCode)
     }
+    // 챌린지 변경 시 testResult 초기화
+    setTestResult({ status: 'idle' })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [challenge?.id])
 
@@ -151,9 +155,16 @@ ${challenge.hint}
     <div className="h-[calc(100vh-0px)]">
       {/* 상단 액션 바 */}
       <div className="flex items-center justify-between gap-3 border-b bg-background px-4 py-3">
-        <div className="min-w-0">
-          <h1 className="truncate text-lg font-semibold">{challenge.title}</h1>
-          <p className="text-sm text-muted-foreground">가이드라인: {challenge.guidelineCode}</p>
+        <div className="flex min-w-0 items-center gap-3">
+          <Button variant="ghost" size="icon" asChild>
+            <Link href="/" aria-label="홈으로 돌아가기">
+              <Home className="h-4 w-4" />
+            </Link>
+          </Button>
+          <div className="min-w-0">
+            <h1 className="truncate text-lg font-semibold">{challenge.title}</h1>
+            <p className="text-sm text-muted-foreground">가이드라인: {challenge.guidelineCode}</p>
+          </div>
         </div>
         <div className="flex shrink-0 items-center gap-2">
           <Button variant="secondary" onClick={handleRun} disabled={isCodeRunning}>
@@ -196,12 +207,18 @@ ${challenge.hint}
                 <TabsContent value="render" className="mt-3">
                   <PreviewPanel code={previewCode} />
                 </TabsContent>
-                <TabsContent value="result" className="mt-3">
-                  <div className="rounded-md border p-4">
-                    <div className="text-sm text-muted-foreground">테스트 결과</div>
-                    <div className="mt-2 text-sm">{testResult.message ?? '아직 결과가 없습니다.'}</div>
-                  </div>
-                </TabsContent>
+                  <TabsContent value="result" className="mt-3">
+                    <div className="rounded-md border p-4">
+                      <div className="text-sm text-muted-foreground">테스트 결과</div>
+                      <div className="mt-2 text-sm">
+                        {testResult.status === 'idle'
+                          ? '아직 결과가 없습니다. 코드를 제출해주세요.'
+                          : testResult.status === 'success'
+                            ? `✅ ${testResult.message}`
+                            : `❌ ${testResult.message}`}
+                      </div>
+                    </div>
+                  </TabsContent>
               </Tabs>
             </TabsContent>
           </Tabs>
@@ -209,7 +226,7 @@ ${challenge.hint}
 
         {/* Desktop */}
         <div className="hidden h-full md:block">
-          <ResizablePanelGroup direction="horizontal" className="h-full">
+          <ResizablePanelGroup orientation="horizontal" className="h-full">
             {/* Left: Guide */}
             <ResizablePanel defaultSize={28} minSize={18}>
               <div className="h-full overflow-auto p-4">
@@ -253,7 +270,13 @@ ${challenge.hint}
                   <TabsContent value="result" className="mt-3">
                     <div className="rounded-md border p-4">
                       <div className="text-sm text-muted-foreground">테스트 결과</div>
-                      <div className="mt-2 text-sm">{testResult.message ?? '아직 결과가 없습니다.'}</div>
+                      <div className="mt-2 text-sm">
+                        {testResult.status === 'idle'
+                          ? '아직 결과가 없습니다. 코드를 제출해주세요.'
+                          : testResult.status === 'success'
+                            ? `✅ ${testResult.message}`
+                            : `❌ ${testResult.message}`}
+                      </div>
                     </div>
                   </TabsContent>
                 </Tabs>
