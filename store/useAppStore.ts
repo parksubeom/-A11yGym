@@ -1,6 +1,4 @@
 import { create } from "zustand"
-import { createJSONStorage, persist } from "zustand/middleware"
-import type { StateStorage } from "zustand/middleware"
 
 export type EditorTab = "editor" | "preview"
 
@@ -102,72 +100,52 @@ const initialState = {
 /**
  * 전역 앱 스토어
  *
- * persist:
- * - 요구사항에 따라 "작성 중인 코드(userCode)"만 localStorage에 저장합니다.
- * - Next.js(App Router) 환경에서 SSR 안전성을 위해 createJSONStorage를 사용합니다.
+ * NOTE:
+ * - 사용자 요청에 따라 새로고침 시 에디터 코드는 초기화되어야 하므로,
+ *   `userCode`는 localStorage에 persist하지 않습니다.
  */
-export const useAppStore = create<AppState>()(
-  persist(
-    (set) => ({
-      ...initialState,
+export const useAppStore = create<AppState>()((set) => ({
+  ...initialState,
 
-      // User
-      setCurrentUser: (user) =>
-        set(() => ({
-          currentUser: user,
-          isAuthenticated: Boolean(user),
-        })),
-      setIsAuthenticated: (isAuthenticated) => set(() => ({ isAuthenticated })),
-      logout: () =>
-        set(() => ({
-          currentUser: null,
-          isAuthenticated: false,
-        })),
+  // User
+  setCurrentUser: (user) =>
+    set(() => ({
+      currentUser: user,
+      isAuthenticated: Boolean(user),
+    })),
+  setIsAuthenticated: (isAuthenticated) => set(() => ({ isAuthenticated })),
+  logout: () =>
+    set(() => ({
+      currentUser: null,
+      isAuthenticated: false,
+    })),
 
-      // Challenge
-      setCurrentChallenge: (challenge) => set(() => ({ currentChallenge: challenge })),
-      setUserCode: (code) => set(() => ({ userCode: code })),
-      setIsCodeRunning: (isRunning) => set(() => ({ isCodeRunning: isRunning })),
-      resetChallengeSession: () =>
-        set(() => ({
-          currentChallenge: null,
-          userCode: "",
-          isCodeRunning: false,
-        })),
+  // Challenge
+  setCurrentChallenge: (challenge) => set(() => ({ currentChallenge: challenge })),
+  setUserCode: (code) => set(() => ({ userCode: code })),
+  setIsCodeRunning: (isRunning) => set(() => ({ isCodeRunning: isRunning })),
+  resetChallengeSession: () =>
+    set(() => ({
+      currentChallenge: null,
+      userCode: "",
+      isCodeRunning: false,
+    })),
 
-      // UI
-      toggleSidebar: () => set((s) => ({ isSidebarOpen: !s.isSidebarOpen })),
-      setSidebarOpen: (isOpen) => set(() => ({ isSidebarOpen: isOpen })),
-      setCurrentTab: (tab) => set(() => ({ currentTab: tab })),
+  // UI
+  toggleSidebar: () => set((s) => ({ isSidebarOpen: !s.isSidebarOpen })),
+  setSidebarOpen: (isOpen) => set(() => ({ isSidebarOpen: isOpen })),
+  setCurrentTab: (tab) => set(() => ({ currentTab: tab })),
 
-      // Feedback
-      setShowHint: (show) => set(() => ({ showHint: show })),
-      setHintLevel: (level) => set(() => ({ hintLevel: level })),
-      setTestResult: (result) => set(() => ({ testResult: result })),
-      resetFeedback: () =>
-        set(() => ({
-          showHint: false,
-          hintLevel: 1,
-          testResult: { status: "idle" },
-        })),
-    }),
-    {
-      name: "a11y-training-platform:app-store",
-      storage: createJSONStorage(() => {
-        // SSR 안전: 서버에서는 no-op storage를 사용해 타입/런타임 모두 안전하게 처리
-        const noopStorage: StateStorage = {
-          getItem: () => null,
-          setItem: () => {},
-          removeItem: () => {},
-        }
-        return typeof window !== "undefined" ? window.localStorage : noopStorage
-      }),
-      partialize: (state) => ({
-        userCode: state.userCode,
-      }),
-      version: 1,
-    }
-  )
-)
+  // Feedback
+  setShowHint: (show) => set(() => ({ showHint: show })),
+  setHintLevel: (level) => set(() => ({ hintLevel: level })),
+  setTestResult: (result) => set(() => ({ testResult: result })),
+  resetFeedback: () =>
+    set(() => ({
+      showHint: false,
+      hintLevel: 1,
+      testResult: { status: "idle" },
+    })),
+}))
 
 

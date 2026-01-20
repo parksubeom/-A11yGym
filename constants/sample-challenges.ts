@@ -102,4 +102,90 @@ export const SAMPLE_CHALLENGES: readonly Challenge[] = [
   <figcaption id="chart-description">연도별 매출 현황</figcaption>
 </figure>`,
   },
+  {
+    id: 'keyboard-clickable-div',
+    kwcagCode: '2.1.1',
+    title: '키보드 접근 불가 (div onClick)',
+    description:
+      '클릭 이벤트만 가진 div/span은 기본적으로 키보드 포커스를 받을 수 없습니다. 키보드 사용자가 동일한 기능을 사용할 수 있도록 적절한 역할(role)과 포커스(tabIndex)를 제공해야 합니다.',
+    difficulty: 'easy',
+    environment: 'react',
+    initialCode: `<div className="card">
+  <h2>상품 상세</h2>
+  <div className="cta" onClick={() => alert("구매!")}>
+    지금 구매하기
+  </div>
+</div>`,
+    highlightLines: [3],
+    solutionCode: `<div className="card">
+  <h2>상품 상세</h2>
+  <div
+    className="cta"
+    role="button"
+    tabIndex={0}
+    onClick={() => alert("구매!")}
+    onKeyDown={(e) => {
+      if (e.key === "Enter" || e.key === " ") alert("구매!")
+    }}
+  >
+    지금 구매하기
+  </div>
+</div>`,
+  },
+  {
+    id: 'form-label-missing',
+    kwcagCode: '3.3.2',
+    title: '폼 레이블 누락 (input label)',
+    description:
+      '입력 필드는 스크린 리더 사용자가 용도를 이해할 수 있도록 레이블이 필요합니다. <label for=\"...\">와 <input id=\"...\">를 연결해 주세요.',
+    difficulty: 'easy',
+    environment: 'react',
+    initialCode: `<form className="signup">
+  <h2>회원가입</h2>
+  <input type="email" placeholder="이메일" />
+  <button type="submit">가입</button>
+</form>`,
+    highlightLines: [3],
+    solutionCode: `<form className="signup">
+  <h2>회원가입</h2>
+  <label htmlFor="email">이메일</label>
+  <input id="email" type="email" placeholder="이메일" />
+  <button type="submit">가입</button>
+</form>`,
+  },
+  {
+    id: 'skip-link-missing',
+    kwcagCode: '2.4.1',
+    title: '반복 영역 건너뛰기 링크 누락 (Skip link)',
+    description:
+      '반복되는 영역(헤더/내비게이션)을 건너뛰고 본문으로 바로 이동할 수 있는 “본문 바로가기” 링크를 제공해야 합니다.',
+    difficulty: 'easy',
+    environment: 'html',
+    initialCode: `<header>
+  <h1>접근성 배움터</h1>
+  <nav>
+    <a href="#news">뉴스</a>
+    <a href="#faq">FAQ</a>
+  </nav>
+</header>
+<main id="content">
+  <h2>메인 콘텐츠</h2>
+  <p>여기가 본문입니다.</p>
+</main>`,
+    highlightLines: [1, 7],
+    solutionCode: `<div class="skip-nav">
+  <a href="#content">본문 바로가기</a>
+</div>
+<header>
+  <h1>접근성 배움터</h1>
+  <nav>
+    <a href="#news">뉴스</a>
+    <a href="#faq">FAQ</a>
+  </nav>
+</header>
+<main id="content" tabindex="-1">
+  <h2>메인 콘텐츠</h2>
+  <p>여기가 본문입니다.</p>
+</main>`,
+  },
 ] as const

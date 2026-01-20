@@ -10,6 +10,9 @@ export type ChallengeId =
   | 'informative-image-banner'
   | 'decorative-image-icon'
   | 'complex-image-chart'
+  | 'keyboard-clickable-div'
+  | 'form-label-missing'
+  | 'skip-link-missing'
 
 /**
  * 문자열에서 JSX 속성 형태를 HTML 속성 형태로 어느 정도 정규화합니다.
@@ -211,11 +214,45 @@ export function validateChallenge(
       return validateDecorativeImage(userCode)
     case 'complex-image-chart':
       return validateComplexImage(userCode)
+    case 'keyboard-clickable-div':
+      return validateKeyboard(userCode)
+    case 'form-label-missing':
+      return validateLabel(userCode)
+    case 'skip-link-missing':
+      return validateSkipLink(userCode)
     default:
       return {
         success: false,
         message: `알 수 없는 챌린지 ID: ${challengeId}`,
       }
+  }
+}
+
+function validateSkipLink(code: string): ValidationResult {
+  const normalized = normalizeCode(code)
+
+  // 본문 바로가기 링크 존재 여부
+  const hasSkipLink = /<a\b[^>]*\bhref\s*=\s*"#content"[^>]*>/i.test(normalized)
+  if (!hasSkipLink) {
+    return {
+      success: false,
+      message:
+        '본문 바로가기 링크가 필요합니다. 예: <a href="#content">본문 바로가기</a>',
+    }
+  }
+
+  // 목적지(main#content) 존재 여부
+  const hasContent = /<main\b[^>]*\bid\s*=\s*"content"[^>]*>/i.test(normalized)
+  if (!hasContent) {
+    return {
+      success: false,
+      message: '본문 영역에 id="content"가 필요합니다. 예: <main id="content">...</main>',
+    }
+  }
+
+  return {
+    success: true,
+    message: '정답입니다! ✅ 반복 영역을 건너뛸 수 있는 링크가 제공되었습니다.',
   }
 }
 

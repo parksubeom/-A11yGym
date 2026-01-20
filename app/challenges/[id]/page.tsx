@@ -43,10 +43,26 @@ function findLocalChallenge(id: string): Challenge | null {
  */
 function validateSolution(challenge: Challenge, code: string) {
   // 챌린지 ID가 validateChallenge에서 지원하는 타입인지 확인
-  const supportedIds = ['informative-image-banner', 'decorative-image-icon', 'complex-image-chart']
+  const supportedIds = [
+    'informative-image-banner',
+    'decorative-image-icon',
+    'complex-image-chart',
+    'keyboard-clickable-div',
+    'form-label-missing',
+    'skip-link-missing',
+  ]
   
   if (supportedIds.includes(challenge.id)) {
-    const result = validateChallenge(challenge.id as 'informative-image-banner' | 'decorative-image-icon' | 'complex-image-chart', code)
+    const result = validateChallenge(
+      challenge.id as
+        | 'informative-image-banner'
+        | 'decorative-image-icon'
+        | 'complex-image-chart'
+        | 'keyboard-clickable-div'
+        | 'form-label-missing'
+        | 'skip-link-missing',
+      code
+    )
     return {
       ok: result.success,
       message: result.message,
@@ -83,8 +99,7 @@ export default function ChallengePage() {
   useEffect(() => {
     if (!challenge) return
 
-    // 챌린지가 변경되면 항상 initialCode로 초기화
-    // (이전 챌린지의 userCode가 persist되어 있어도 새 챌린지의 initialCode로 시작)
+    // 새로고침 시에도 초기화되어야 하므로, 항상 initialCode로 시작
     setUserCode(challenge.initialCode)
     setPreviewCode(challenge.initialCode)
 
