@@ -29,6 +29,12 @@ export interface CodeEditorProps {
    * ESC로 포커스 탈출(blur) 기능 사용 여부 (기본값: true)
    */
   enableEscapeToBlur?: boolean
+  /**
+   * 강조할 라인 번호 배열
+   * 예: [3, 5]는 3번째 줄부터 5번째 줄까지 강조
+   * 예: [7]은 7번째 줄만 강조
+   */
+  highlightLines?: number[]
   className?: string
 }
 
@@ -56,6 +62,7 @@ export function CodeEditor({
   ariaLabel = '코드 편집기',
   language = 'tsx',
   enableEscapeToBlur = true,
+  highlightLines,
   className,
 }: CodeEditorProps) {
   const id = useId()
@@ -64,8 +71,30 @@ export function CodeEditor({
 
   const highlight = useMemo(() => {
     const prismLang = getPrismLanguage(language)
-    return (value: string) => Prism.highlight(value, prismLang, language)
-  }, [language])
+    return (value: string) => {
+      const highlighted = Prism.highlight(value, prismLang, language)
+      
+      // highlightLines가 있으면 해당 라인에 강조 스타일 적용
+      if (highlightLines && highlightLines.length > 0) {
+        const lines = highlighted.split('\n')
+        const startLine = highlightLines[0] - 1 // 0-based index
+        const endLine = highlightLines.length > 1 ? highlightLines[1] - 1 : startLine
+        
+        return lines
+          .map((line, index) => {
+            if (index >= startLine && index <= endLine) {
+              // 라인 번호만 지정된 경우 해당 라인만 강조
+              // 배경색은 CSS로 적용하되, span으로 감싸지 않고 data 속성 사용
+              return `<span data-highlight-line="true">${line}</span>`
+            }
+            return line
+          })
+          .join('\n')
+      }
+      
+      return highlighted
+    }
+  }, [language, highlightLines])
 
   // react-simple-code-editor는 textareaProps/textareaRef를 공식적으로 지원하지 않고,
   // unknown props는 wrapper div로 전달되어 React 경고를 유발할 수 있습니다.
@@ -116,7 +145,7 @@ export function CodeEditor({
           readOnly={readOnly}
           className={[
             // Editor root
-            'min-h-[220px] font-mono text-sm leading-6',
+            'min-h-[220px] max-h-[600px] overflow-auto font-mono text-sm leading-6',
             // focus ring
             'focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2',
           ].join(' ')}

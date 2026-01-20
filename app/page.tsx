@@ -61,15 +61,12 @@ export default function Home() {
               <CardHeader>
                 <div className="flex items-start justify-between gap-2">
                   <CardTitle className="text-lg">{challenge.title}</CardTitle>
-                  <Badge
-                    className={difficultyColors[challenge.difficulty]}
-                    variant="secondary"
-                  >
-                    {difficultyLabels[challenge.difficulty]}
+                  <Badge variant="secondary">
+                    {challenge.environment === 'react' ? 'React' : 'HTML'}
                   </Badge>
                 </div>
                 <CardDescription className="mt-2">
-                  가이드라인: {challenge.guidelineCode}
+                  가이드라인: {challenge.kwcagCode}
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex-1">

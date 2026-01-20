@@ -94,7 +94,14 @@ function HintAccordionItem({ hint, isOpen }: HintAccordionItemProps) {
         >
           {isOpen && (
             <div className="prose prose-sm max-w-none text-muted-foreground">
-              <p>{hint.content}</p>
+              {hint.level === 3 ? (
+                // 정답 코드는 코드 블록으로 표시
+                <pre className="overflow-x-auto rounded-md bg-muted p-4 text-sm">
+                  <code>{hint.content}</code>
+                </pre>
+              ) : (
+                <p>{hint.content}</p>
+              )}
             </div>
           )}
         </div>

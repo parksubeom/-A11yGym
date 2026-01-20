@@ -10,8 +10,10 @@ import { Home } from 'lucide-react'
 import { CodeEditor } from '@/components/CodeEditor'
 import { HintPanel, type HintLevel } from '@/components/HintPanel'
 import { PreviewPanel } from '@/components/PreviewPanel'
-import { SAMPLE_CHALLENGES, type Challenge } from '@/constants/sample-challenges'
+import { SAMPLE_CHALLENGES } from '@/constants/sample-challenges'
+import type { Challenge } from '@/types/challenge'
 import { useAppStore } from '@/store/useAppStore'
+import { validateChallenge } from '@/lib/validator'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -34,20 +36,28 @@ function findLocalChallenge(id: string): Challenge | null {
   return found ?? null
 }
 
+/**
+ * 사용자 코드를 챌린지별 검증 로직으로 검증
+ * 
+ * validateChallenge 함수를 사용하여 챌린지별 맞춤 검증을 수행합니다.
+ */
 function validateSolution(challenge: Challenge, code: string) {
-  const rule = challenge.validationRule
-  if (rule.type === 'regex') {
-    const re = new RegExp(rule.pattern, rule.flags ?? 'gms')
-    const shouldMatch = rule.shouldMatch ?? true
-    const matched = re.test(code)
-    const ok = shouldMatch ? matched : !matched
+  // 챌린지 ID가 validateChallenge에서 지원하는 타입인지 확인
+  const supportedIds = ['informative-image-banner', 'decorative-image-icon', 'complex-image-chart']
+  
+  if (supportedIds.includes(challenge.id)) {
+    const result = validateChallenge(challenge.id as 'informative-image-banner' | 'decorative-image-icon' | 'complex-image-chart', code)
     return {
-      ok,
-      message: ok ? '정답입니다! ✅' : rule.message,
+      ok: result.success,
+      message: result.message,
     }
   }
 
-  return { ok: false, message: '지원하지 않는 검증 규칙입니다.' }
+  // 지원하지 않는 챌린지의 경우 기본 검증
+  return {
+    ok: false,
+    message: '이 챌린지는 아직 검증 로직이 구현되지 않았습니다.',
+  }
 }
 
 export default function ChallengePage() {
@@ -69,18 +79,14 @@ export default function ChallengePage() {
 
   const challenge = useMemo(() => (id ? findLocalChallenge(id) : null), [id])
 
-  // 최초 진입 시 기본 코드 세팅 (persist된 userCode가 비어있을 때만)
+  // 챌린지 변경 시 코드 초기화
   useEffect(() => {
     if (!challenge) return
-    const nextCode = userCode.trim().length === 0 ? challenge.initialCode : userCode
 
-    // 에디터/프리뷰 모두 "현재 세션의 코드"를 기준으로 시작하게 맞춘다.
-    // - persist된 userCode가 있으면 그걸 복원
-    // - 없으면 initialCode로 시작
-    if (userCode.trim().length === 0) {
-      setUserCode(nextCode)
-    }
-    setPreviewCode(nextCode)
+    // 챌린지가 변경되면 항상 initialCode로 초기화
+    // (이전 챌린지의 userCode가 persist되어 있어도 새 챌린지의 initialCode로 시작)
+    setUserCode(challenge.initialCode)
+    setPreviewCode(challenge.initialCode)
 
     // 챌린지 변경 시 testResult 초기화
     setTestResult({ status: 'idle' })
@@ -91,40 +97,43 @@ export default function ChallengePage() {
     if (!challenge) return ''
     return `## ${challenge.title}
 
-**가이드라인:** \`${challenge.guidelineCode}\`
+**가이드라인:** \`${challenge.kwcagCode}\`
 
 ${challenge.description}
-
----
-
-### 힌트
-${challenge.hint}
 `
   }, [challenge])
 
   const hints: HintLevel[] = useMemo(() => {
     if (!challenge) return []
-    // 3단계 힌트 시스템: (예시) 1=가이드, 2=검증룰 메시지, 3=정답 일부
-    const solutionSnippet =
-      challenge.solutionCode.length > 160
-        ? `${challenge.solutionCode.slice(0, 160)}...`
-        : challenge.solutionCode
+    // 3단계 힌트 시스템: 1=가이드, 2=문제 분석, 3=정답 코드 전체
+
+    // 챌린지별 힌트 메시지
+    let hint1 = challenge.description
+    let hint2 = ''
+
+    if (challenge.id === 'informative-image-banner') {
+      hint2 = '정보성 이미지는 alt 속성에 이미지가 전달하는 내용을 명확하게 작성해야 합니다. 예: "봄맞이 50% 할인 이벤트 배너"'
+    } else if (challenge.id === 'decorative-image-icon') {
+      hint2 = '버튼에 이미 텍스트("설정")가 있으므로, 아이콘 이미지는 장식용입니다. alt=""로 설정하여 중복 낭독을 방지하세요.'
+    } else if (challenge.id === 'complex-image-chart') {
+      hint2 = '복잡한 이미지는 단순한 "차트"가 아닌 구체적인 수치와 정보를 포함해야 합니다. aria-describedby를 사용하여 상세 설명을 연결할 수도 있습니다.'
+    }
 
     return [
       {
         level: 1,
         title: '기본 가이드',
-        content: challenge.hint,
+        content: hint1,
       },
       {
         level: 2,
-        title: '검증 기준 힌트',
-        content: challenge.validationRule.message,
+        title: '문제 분석',
+        content: hint2 || '코드를 자세히 살펴보고 문제점을 찾아보세요.',
       },
       {
         level: 3,
-        title: '정답 코드 일부',
-        content: solutionSnippet,
+        title: '정답 코드',
+        content: challenge.solutionCode,
       },
     ]
   }, [challenge])
@@ -169,7 +178,7 @@ ${challenge.hint}
           </Button>
           <div className="min-w-0">
             <h1 className="truncate text-lg font-semibold">{challenge.title}</h1>
-            <p className="text-sm text-muted-foreground">가이드라인: {challenge.guidelineCode}</p>
+            <p className="text-sm text-muted-foreground">가이드라인: {challenge.kwcagCode}</p>
           </div>
         </div>
         <div className="flex shrink-0 items-center gap-2">
@@ -201,7 +210,13 @@ ${challenge.hint}
             </TabsContent>
 
             <TabsContent value="editor" className="h-[calc(100%-56px)] overflow-auto p-4">
-              <CodeEditor code={userCode} onChange={setUserCode} readOnly={false} language="html" />
+              <CodeEditor
+                code={userCode}
+                onChange={setUserCode}
+                readOnly={false}
+                language="html"
+                highlightLines={(challenge as { highlightLines?: number[] })?.highlightLines}
+              />
             </TabsContent>
 
             <TabsContent value="preview" className="h-[calc(100%-56px)] overflow-auto p-4">
@@ -211,7 +226,10 @@ ${challenge.hint}
                   <TabsTrigger value="result">Result</TabsTrigger>
                 </TabsList>
                 <TabsContent value="render" className="mt-3">
-                  <PreviewPanel code={previewCode} />
+                  <PreviewPanel
+                    code={previewCode}
+                    assets={(challenge as { assets?: Array<{ type: string; url: string; altDescription?: string }> })?.assets}
+                  />
                 </TabsContent>
                   <TabsContent value="result" className="mt-3">
                     <div className="rounded-md border p-4">
@@ -254,6 +272,7 @@ ${challenge.hint}
                   readOnly={false}
                   language="html"
                   ariaLabel="챌린지 코드 편집기"
+                  highlightLines={(challenge as { highlightLines?: number[] })?.highlightLines}
                 />
               </div>
             </ResizablePanel>
@@ -270,7 +289,10 @@ ${challenge.hint}
                   </TabsList>
 
                   <TabsContent value="render" className="mt-3">
-                    <PreviewPanel code={previewCode} />
+                    <PreviewPanel
+                      code={previewCode}
+                      assets={(challenge as { assets?: Array<{ type: string; url: string; altDescription?: string }> })?.assets}
+                    />
                   </TabsContent>
 
                   <TabsContent value="result" className="mt-3">

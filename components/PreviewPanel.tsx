@@ -3,14 +3,19 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { AlertCircle } from 'lucide-react'
 import axe from 'axe-core'
-import { computeAccessibleName, computeAccessibleDescription } from 'dom-accessibility-api'
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import type { ChallengeAsset } from '@/types/challenge'
 
 export interface PreviewPanelProps {
   code: string
+  /**
+   * 챌린지에 필요한 리소스 (이미지, 비디오 등)
+   * 코드 실행 전에 미리 로드하여 캐싱합니다.
+   */
+  assets?: ChallengeAsset[]
   className?: string
 }
 
@@ -231,7 +236,7 @@ function clearHighlights(doc: Document) {
  * - Error Boundary로 런타임 에러 처리
  * - React JSX 코드를 HTML로 변환하여 렌더링
  */
-export function PreviewPanel({ code, className }: PreviewPanelProps) {
+export function PreviewPanel({ code, assets, className }: PreviewPanelProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const [error, setError] = useState<ErrorInfo | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -239,6 +244,27 @@ export function PreviewPanel({ code, className }: PreviewPanelProps) {
   const [a11yTree, setA11yTree] = useState<A11yNode[]>([])
   const [issues, setIssues] = useState<AxeIssue[]>([])
   const [analysisError, setAnalysisError] = useState<string | null>(null)
+
+  // Assets 이미지 프리로드 및 캐싱
+  useEffect(() => {
+    if (!assets || assets.length === 0) return
+
+    const imageAssets = assets.filter((asset) => asset.type === 'image')
+    const imagePromises = imageAssets.map((asset) => {
+      return new Promise<void>((resolve, reject) => {
+        const img = new Image()
+        img.onload = () => resolve()
+        img.onerror = () => {
+          console.warn(`이미지 로드 실패: ${asset.url}`)
+          resolve() // 실패해도 계속 진행
+        }
+        img.src = asset.url
+      })
+    })
+
+    // 모든 이미지가 로드될 때까지 대기 (선택적)
+    void Promise.all(imagePromises)
+  }, [assets])
 
   useEffect(() => {
     const iframe = iframeRef.current
@@ -286,36 +312,98 @@ export function PreviewPanel({ code, className }: PreviewPanelProps) {
 
       const runAnalyses = async () => {
         try {
+          // iframe이 완전히 로드되었는지 확인
+          if (!iframeDoc.body || !iframeDoc.body.children.length) {
+            throw new Error('iframe이 아직 완전히 로드되지 않았습니다.')
+          }
+
           injectHighlightStyles(iframeDoc)
           clearHighlights(iframeDoc)
 
           // A11y Tree(근사): focusable / aria / role 중심으로 요약
           const candidates = Array.from(
             iframeDoc.body.querySelectorAll(
-              'a,button,input,select,textarea,[role],[tabindex],[aria-label],[aria-labelledby],[aria-describedby]'
+              'a,button,input,select,textarea,img,[role],[tabindex],[aria-label],[aria-labelledby],[aria-describedby]'
             )
           )
+
+          // 간단한 accessible name 계산 함수 (iframe 컨텍스트에서 안전하게 작동)
+          const getAccessibleName = (element: HTMLElement): string => {
+            // aria-label 우선
+            const ariaLabel = element.getAttribute('aria-label')
+            if (ariaLabel) return ariaLabel
+
+            // img 태그는 alt 속성
+            if (element.tagName.toLowerCase() === 'img') {
+              const alt = element.getAttribute('alt')
+              if (alt !== null) return alt || '(빈 alt 속성)'
+              return '(alt 속성 없음)'
+            }
+
+            // aria-labelledby
+            const labelledBy = element.getAttribute('aria-labelledby')
+            if (labelledBy) {
+              const labelEl = iframeDoc.getElementById(labelledBy)
+              if (labelEl) return labelEl.textContent || ''
+            }
+
+            // label 연결 (input의 경우)
+            if (element.tagName.toLowerCase() === 'input' || element.tagName.toLowerCase() === 'textarea') {
+              const id = element.id
+              if (id) {
+                const label = iframeDoc.querySelector(`label[for="${id}"]`)
+                if (label) return label.textContent || ''
+              }
+            }
+
+            // 기본 텍스트 콘텐츠
+            const textContent = element.textContent?.trim()
+            if (textContent) return textContent
+
+            // title 속성
+            const title = element.getAttribute('title')
+            if (title) return title
+
+            return ''
+          }
+
+          const getAccessibleDescription = (element: HTMLElement): string => {
+            const ariaDescribedBy = element.getAttribute('aria-describedby')
+            if (ariaDescribedBy) {
+              const descEl = iframeDoc.getElementById(ariaDescribedBy)
+              if (descEl) return descEl.textContent || ''
+            }
+            return ''
+          }
 
           const nodes: A11yNode[] = candidates
             .filter((el) => el instanceof HTMLElement)
             .slice(0, 200) // 안전장치: 너무 커지면 UI가 무거워짐
             .map((el) => {
-              const element = el as HTMLElement
-              const role = element.getAttribute('role')
-              const name = computeAccessibleName(element) || ''
-              const description = computeAccessibleDescription(element) || ''
-              const focusable = isElementFocusable(element)
-              return {
-                selector: safeSelector(element),
-                tag: element.tagName.toLowerCase(),
-                role,
-                name: name.trim(),
-                description: description.trim() || undefined,
-                focusable,
+              try {
+                const element = el as HTMLElement
+                const role = element.getAttribute('role')
+                const name = getAccessibleName(element)
+                const description = getAccessibleDescription(element)
+                const focusable = isElementFocusable(element)
+                
+                return {
+                  selector: safeSelector(element),
+                  tag: element.tagName.toLowerCase(),
+                  role,
+                  name: name.trim(),
+                  description: description.trim() || undefined,
+                  focusable,
+                }
+              } catch (err) {
+                console.warn('A11y 노드 생성 오류:', err, el)
+                return null
               }
             })
+            .filter((n): n is A11yNode => n !== null)
             // 의미 없는 항목을 줄이기 위해 필터링(이름/role/focusable 중 하나라도 있으면 노출)
-            .filter((n) => n.focusable || Boolean(n.role) || Boolean(n.name))
+            // img 태그는 alt 속성 상태를 확인하기 위해 항상 포함
+            .filter((n) => n.focusable || Boolean(n.role) || Boolean(n.name) || n.tag === 'img')
 
           setA11yTree(nodes)
 
@@ -324,18 +412,40 @@ export function PreviewPanel({ code, className }: PreviewPanelProps) {
           // 부모(window)에서 import한 axe로 iframe Document를 직접 분석하면
           // 런타임에서 "axe.run arguments are invalid"가 발생할 수 있습니다.
           // 해결: axe 소스를 iframe 내부에 주입한 뒤, iframeWindow.axe.run(...)으로 실행합니다.
-          const iframeAxe = (iframeWindow as unknown as { axe?: typeof axe }).axe
-          if (!iframeAxe) {
-            // eslint-disable-next-line no-eval
-            ;(iframeWindow as unknown as { eval: (source: string) => unknown }).eval(axe.source)
+          
+          // axe가 이미 주입되어 있는지 확인
+          let axeApi = (iframeWindow as unknown as { axe?: typeof axe }).axe
+          
+          if (!axeApi) {
+            try {
+              // axe 소스를 iframe 내부에 주입
+              // eslint-disable-next-line no-eval
+              ;(iframeWindow as unknown as { eval: (source: string) => unknown }).eval(axe.source)
+              axeApi = (iframeWindow as unknown as { axe?: typeof axe }).axe
+            } catch (evalError) {
+              console.error('axe 주입 실패:', evalError)
+              throw new Error('axe를 iframe에 주입하는 중 오류가 발생했습니다.')
+            }
           }
 
-          const axeApi = (iframeWindow as unknown as { axe?: typeof axe }).axe
           if (!axeApi?.run) {
-            throw new Error('axe를 iframe에 주입하지 못했습니다.')
+            throw new Error('axe API가 올바르게 초기화되지 않았습니다.')
           }
 
-          const results = await axeApi.run(iframeDoc)
+          // axe.run 실행 (타임아웃 설정)
+          const axePromise = axeApi.run(iframeDoc, {
+            runOnly: {
+              type: 'tag',
+              values: ['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'],
+            },
+          })
+
+          // 10초 타임아웃
+          const timeoutPromise = new Promise((_, reject) => {
+            setTimeout(() => reject(new Error('axe 분석이 시간 초과되었습니다.')), 10000)
+          })
+
+          const results = await Promise.race([axePromise, timeoutPromise]) as Awaited<ReturnType<typeof axeApi.run>>
 
           const v = (results.violations || []) as unknown as AxeIssue[]
           setIssues(v)
@@ -357,9 +467,31 @@ export function PreviewPanel({ code, className }: PreviewPanelProps) {
             if (marked >= maxToMark) break
           }
         } catch (e) {
-          const msg = e instanceof Error ? e.message : '접근성 분석 중 오류가 발생했습니다.'
-          setAnalysisError(msg)
+          // 오류 메시지를 더 구체적으로 설정
+          let errorMessage = '접근성 분석 중 오류가 발생했습니다.'
+          if (e instanceof Error) {
+            errorMessage = e.message || errorMessage
+            // 스택 트레이스가 있으면 콘솔에 로깅
+            if (e.stack) {
+              console.error('접근성 분석 오류:', e.message, e.stack)
+            }
+          } else if (typeof e === 'string') {
+            errorMessage = e
+          } else {
+            console.error('알 수 없는 오류:', e)
+          }
+          setAnalysisError(errorMessage)
         }
+      }
+
+      // Assets URL을 코드에 주입 (코드에서 상대 경로나 placeholder를 사용하는 경우)
+      let processedCode = htmlCode
+      if (assets && assets.length > 0) {
+        // 코드에서 assets의 URL을 찾아서 실제 URL로 치환
+        // 예: 코드에 <img src="/promo.png" />가 있고 assets에 {url: "https://..."}가 있으면
+        // 실제 URL로 치환하거나, 코드가 이미 올바른 URL을 사용하면 그대로 둠
+        // 여기서는 코드가 assets의 URL을 직접 참조하도록 가정
+        // 필요시 더 정교한 매칭 로직 추가 가능
       }
 
       // iframe 문서 초기화
@@ -379,10 +511,11 @@ export function PreviewPanel({ code, className }: PreviewPanelProps) {
               button:focus, [role="button"]:focus { outline: 2px solid #0066cc; outline-offset: 2px; }
               input, textarea { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
               label { display: block; margin-bottom: 4px; font-weight: 500; }
+              img { max-width: 100%; height: auto; }
             </style>
           </head>
           <body>
-            ${htmlCode}
+            ${processedCode}
           </body>
         </html>
       `)
@@ -390,8 +523,18 @@ export function PreviewPanel({ code, className }: PreviewPanelProps) {
 
       // iframe 로드 완료 후 로딩 상태 해제
       iframe.onload = () => {
-        // 렌더 후 분석 실행
-        void runAnalyses().finally(() => setIsLoading(false))
+        // iframe이 완전히 로드된 후 약간의 지연을 두고 분석 실행
+        // DOM이 완전히 렌더링될 시간을 확보
+        setTimeout(() => {
+          void runAnalyses().finally(() => setIsLoading(false))
+        }, 100)
+      }
+
+      // iframe이 이미 로드된 경우를 대비
+      if (iframe.contentDocument?.readyState === 'complete') {
+        setTimeout(() => {
+          void runAnalyses().finally(() => setIsLoading(false))
+        }, 100)
       }
 
       // cleanup
@@ -473,7 +616,8 @@ export function PreviewPanel({ code, className }: PreviewPanelProps) {
             <TabsContent value="a11y" className="h-[calc(100%-48px)] overflow-auto p-3">
               {analysisError ? (
                 <div className="rounded-md border bg-muted p-3 text-sm text-muted-foreground">
-                  접근성 분석 중 오류가 발생했습니다: {analysisError}
+                  <div className="font-semibold text-destructive">접근성 분석 오류</div>
+                  <div className="mt-1">{analysisError}</div>
                 </div>
               ) : a11yTree.length === 0 ? (
                 <div className="text-sm text-muted-foreground">
@@ -515,7 +659,8 @@ export function PreviewPanel({ code, className }: PreviewPanelProps) {
             <TabsContent value="issues" className="h-[calc(100%-48px)] overflow-auto p-3">
               {analysisError ? (
                 <div className="rounded-md border bg-muted p-3 text-sm text-muted-foreground">
-                  axe 분석 중 오류가 발생했습니다: {analysisError}
+                  <div className="font-semibold text-destructive">axe 분석 오류</div>
+                  <div className="mt-1">{analysisError}</div>
                 </div>
               ) : issues.length === 0 ? (
                 <div className="text-sm text-muted-foreground">현재 치명적인 이슈가 감지되지 않았습니다.</div>
