@@ -204,14 +204,17 @@ ${challenge.description}
               </div>
             </TabsContent>
 
-            <TabsContent value="editor" className="h-[calc(100%-56px)] overflow-auto p-4">
-              <CodeEditor
-                code={userCode}
-                onChange={setUserCode}
-                readOnly={false}
-                language="html"
-                highlightLines={(challenge as { highlightLines?: number[] })?.highlightLines}
-              />
+            <TabsContent value="editor" className="h-[calc(100%-56px)] overflow-hidden p-4 flex flex-col">
+              <div className="flex-1 min-h-0 min-w-0">
+                <CodeEditor
+                  code={userCode}
+                  onChange={setUserCode}
+                  readOnly={false}
+                  language="html"
+                  highlightLines={(challenge as { highlightLines?: number[] })?.highlightLines}
+                  className="h-full"
+                />
+              </div>
             </TabsContent>
 
             <TabsContent value="preview" className="h-[calc(100%-56px)] overflow-auto p-4">
@@ -260,15 +263,18 @@ ${challenge.description}
 
             {/* Center: Editor */}
             <ResizablePanel defaultSize={44} minSize={26}>
-              <div className="h-full overflow-auto p-4">
-                <CodeEditor
-                  code={userCode}
-                  onChange={setUserCode}
-                  readOnly={false}
-                  language="html"
-                  ariaLabel="챌린지 코드 편집기"
-                  highlightLines={(challenge as { highlightLines?: number[] })?.highlightLines}
-                />
+              <div className="h-full overflow-hidden p-4 flex flex-col min-w-0">
+                <div className="flex-1 min-h-0 min-w-0">
+                  <CodeEditor
+                    code={userCode}
+                    onChange={setUserCode}
+                    readOnly={false}
+                    language="html"
+                    ariaLabel="챌린지 코드 편집기"
+                    highlightLines={(challenge as { highlightLines?: number[] })?.highlightLines}
+                    className="h-full"
+                  />
+                </div>
               </div>
             </ResizablePanel>
 

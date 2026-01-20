@@ -79,7 +79,7 @@ export const SAMPLE_CHALLENGES: readonly Challenge[] = [
     environment: 'html',
     initialCode: `<figure className="sales-chart">
   <img 
-    src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='450'%3E%3Crect width='600' height='450' fill='%23f8f9fa'/%3E%3Ctext x='300' y='30' text-anchor='middle' font-size='20' font-weight='bold' fill='%23333'%3E연도별 매출 현황%3C/text%3E%3Cg transform='translate(50,60)'%3E%3Crect x='0' y='250' width='100' height='60' fill='%239B59B6'/%3E%3Ctext x='50' y='240' text-anchor='middle' font-size='12' fill='%23333' font-weight='bold'%3E1억원%3C/text%3E%3Ctext x='50' y='330' text-anchor='middle' font-size='18' fill='%23333' font-weight='bold'%3E2020%3C/text%3E%3Crect x='150' y='190' width='100' height='120' fill='%239B59B6'/%3E%3Ctext x='200' y='180' text-anchor='middle' font-size='12' fill='%23333' font-weight='bold'%3E1.5억원%3C/text%3E%3Ctext x='200' y='330' text-anchor='middle' font-size='18' fill='%23333' font-weight='bold'%3E2021%3C/text%3E%3Crect x='300' y='130' width='100' height='180' fill='%239B59B6'/%3E%3Ctext x='350' y='120' text-anchor='middle' font-size='12' fill='%23333' font-weight='bold'%3E2억원%3C/text%3E%3Ctext x='350' y='330' text-anchor='middle' font-size='18' fill='%23333' font-weight='bold'%3E2022%3C/text%3E%3Crect x='450' y='70' width='100' height='240' fill='%239B59B6'/%3E%3Ctext x='500' y='60' text-anchor='middle' font-size='12' fill='%23333' font-weight='bold'%3E2.5억원%3C/text%3E%3Ctext x='500' y='330' text-anchor='middle' font-size='18' fill='%23333' font-weight='bold'%3E2023%3C/text%3E%3C/g%3E%3C/svg%3E" 
+    src="/sales-chart.svg" 
     alt="차트"
   />
   <figcaption>연도별 매출 현황</figcaption>
@@ -88,14 +88,14 @@ export const SAMPLE_CHALLENGES: readonly Challenge[] = [
     assets: [
       {
         type: 'image',
-        url: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="600" height="450"%3E%3Crect width="600" height="450" fill="%23f8f9fa"/%3E%3Ctext x="300" y="30" text-anchor="middle" font-size="20" font-weight="bold" fill="%23333"%3E연도별 매출 현황%3C/text%3E%3Cg transform="translate(50,60)"%3E%3Crect x="0" y="250" width="100" height="60" fill="%239B59B6"/%3E%3Ctext x="50" y="240" text-anchor="middle" font-size="12" fill="%23333" font-weight="bold"%3E1억원%3C/text%3E%3Ctext x="50" y="330" text-anchor="middle" font-size="18" fill="%23333" font-weight="bold"%3E2020%3C/text%3E%3Crect x="150" y="190" width="100" height="120" fill="%239B59B6"/%3E%3Ctext x="200" y="180" text-anchor="middle" font-size="12" fill="%23333" font-weight="bold"%3E1.5억원%3C/text%3E%3Ctext x="200" y="330" text-anchor="middle" font-size="18" fill="%23333" font-weight="bold"%3E2021%3C/text%3E%3Crect x="300" y="130" width="100" height="180" fill="%239B59B6"/%3E%3Ctext x="350" y="120" text-anchor="middle" font-size="12" fill="%23333" font-weight="bold"%3E2억원%3C/text%3E%3Ctext x="350" y="330" text-anchor="middle" font-size="18" fill="%23333" font-weight="bold"%3E2022%3C/text%3E%3Crect x="450" y="70" width="100" height="240" fill="%239B59B6"/%3E%3Ctext x="500" y="60" text-anchor="middle" font-size="12" fill="%23333" font-weight="bold"%3E2.5억원%3C/text%3E%3Ctext x="500" y="330" text-anchor="middle" font-size="18" fill="%23333" font-weight="bold"%3E2023%3C/text%3E%3C/g%3E%3C/svg%3E',
+        url: '/sales-chart.svg',
         altDescription:
           '연도별 매출 막대 그래프: 2020년 1억원, 2021년 1.5억원, 2022년 2억원, 2023년 2.5억원으로 지속적인 성장 추세를 보임',
       },
     ],
     solutionCode: `<figure className="sales-chart">
   <img 
-    src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='450'%3E%3Crect width='600' height='450' fill='%23f8f9fa'/%3E%3Ctext x='300' y='30' text-anchor='middle' font-size='20' font-weight='bold' fill='%23333'%3E연도별 매출 현황%3C/text%3E%3Cg transform='translate(50,60)'%3E%3Crect x='0' y='250' width='100' height='60' fill='%239B59B6'/%3E%3Ctext x='50' y='240' text-anchor='middle' font-size='12' fill='%23333' font-weight='bold'%3E1억원%3C/text%3E%3Ctext x='50' y='330' text-anchor='middle' font-size='18' fill='%23333' font-weight='bold'%3E2020%3C/text%3E%3Crect x='150' y='190' width='100' height='120' fill='%239B59B6'/%3E%3Ctext x='200' y='180' text-anchor='middle' font-size='12' fill='%23333' font-weight='bold'%3E1.5억원%3C/text%3E%3Ctext x='200' y='330' text-anchor='middle' font-size='18' fill='%23333' font-weight='bold'%3E2021%3C/text%3E%3Crect x='300' y='130' width='100' height='180' fill='%239B59B6'/%3E%3Ctext x='350' y='120' text-anchor='middle' font-size='12' fill='%23333' font-weight='bold'%3E2억원%3C/text%3E%3Ctext x='350' y='330' text-anchor='middle' font-size='18' fill='%23333' font-weight='bold'%3E2022%3C/text%3E%3Crect x='450' y='70' width='100' height='240' fill='%239B59B6'/%3E%3Ctext x='500' y='60' text-anchor='middle' font-size='12' fill='%23333' font-weight='bold'%3E2.5억원%3C/text%3E%3Ctext x='500' y='330' text-anchor='middle' font-size='18' fill='%23333' font-weight='bold'%3E2023%3C/text%3E%3C/g%3E%3C/svg%3E" 
+    src="/sales-chart.svg" 
     alt="연도별 매출 막대 그래프: 2020년 1억원, 2021년 1.5억원, 2022년 2억원, 2023년 2.5억원으로 지속적인 성장 추세"
     aria-describedby="chart-description"
   />

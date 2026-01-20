@@ -135,7 +135,7 @@ export function CodeEditor({
         코드 입력 영역입니다. 종료하려면 ESC 키를 누르세요.
       </p>
 
-      <div className="rounded-md border bg-background">
+      <div className="rounded-md border bg-background min-w-0 w-full">
         <Editor
           value={code}
           onValueChange={onChange}
@@ -145,7 +145,9 @@ export function CodeEditor({
           readOnly={readOnly}
           className={[
             // Editor root
-            'min-h-[220px] max-h-[600px] overflow-auto font-mono text-sm leading-6',
+            'min-h-[220px] w-full font-mono text-sm leading-6',
+            // 스크롤 처리: 가로/세로 모두 스크롤 가능
+            'overflow-auto',
             // focus ring
             'focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2',
           ].join(' ')}
@@ -154,6 +156,9 @@ export function CodeEditor({
             fontFamily:
               'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
             fontSize: 14,
+            minWidth: '100%',
+            width: '100%',
+            overflow: 'auto',
           }}
         />
       </div>

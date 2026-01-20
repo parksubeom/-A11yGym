@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="450">
+  <rect width="600" height="450" fill="#f8f9fa"/>
+  <text x="300" y="30" text-anchor="middle" font-size="20" font-weight="bold" fill="#333">연도별 매출 현황</text>
+  <g transform="translate(50,60)">
+    <rect x="0" y="250" width="100" height="60" fill="#9B59B6"/>
+    <text x="50" y="240" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">1억원</text>
+    <text x="50" y="330" text-anchor="middle" font-size="18" fill="#333" font-weight="bold">2020</text>
+    <rect x="150" y="190" width="100" height="120" fill="#9B59B6"/>
+    <text x="200" y="180" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">1.5억원</text>
+    <text x="200" y="330" text-anchor="middle" font-size="18" fill="#333" font-weight="bold">2021</text>
+    <rect x="300" y="130" width="100" height="180" fill="#9B59B6"/>
+    <text x="350" y="120" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">2억원</text>
+    <text x="350" y="330" text-anchor="middle" font-size="18" fill="#333" font-weight="bold">2022</text>
+    <rect x="450" y="70" width="100" height="240" fill="#9B59B6"/>
+    <text x="500" y="60" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">2.5억원</text>
+    <text x="500" y="330" text-anchor="middle" font-size="18" fill="#333" font-weight="bold">2023</text>
+  </g>
+</svg>
+

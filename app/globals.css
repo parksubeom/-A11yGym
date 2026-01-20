@@ -66,3 +66,18 @@
   border-radius: 2px;
 }
 
+/* CodeEditor 반응형 스크롤 처리 */
+.react-simple-code-editor {
+  width: 100%;
+  min-width: 0;
+}
+
+.react-simple-code-editor textarea,
+.react-simple-code-editor pre {
+  width: 100% !important;
+  min-width: 0 !important;
+  overflow: auto !important;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+
