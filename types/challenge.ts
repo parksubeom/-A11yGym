@@ -53,6 +53,11 @@ export interface Challenge {
   description: string
   
   /**
+   * 챌린지 난이도
+   */
+  difficulty: 'easy' | 'medium' | 'hard'
+  
+  /**
    * 실습 환경 설정
    * - 'html': 순수 HTML 환경
    * - 'react': React JSX 환경

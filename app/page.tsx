@@ -61,8 +61,11 @@ export default function Home() {
               <CardHeader>
                 <div className="flex items-start justify-between gap-2">
                   <CardTitle className="text-lg">{challenge.title}</CardTitle>
-                  <Badge variant="secondary">
-                    {challenge.environment === 'react' ? 'React' : 'HTML'}
+                  <Badge
+                    className={difficultyColors[challenge.difficulty]}
+                    variant="secondary"
+                  >
+                    {difficultyLabels[challenge.difficulty]}
                   </Badge>
                 </div>
                 <CardDescription className="mt-2">

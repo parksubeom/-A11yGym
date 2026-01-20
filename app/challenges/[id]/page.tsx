@@ -105,33 +105,28 @@ ${challenge.description}
 
   const hints: HintLevel[] = useMemo(() => {
     if (!challenge) return []
-    // 3단계 힌트 시스템: 1=가이드, 2=문제 분석, 3=정답 코드 전체
+    // 2단계 힌트 시스템: 1=문제 분석, 2=정답 코드 전체
+    // (기본 가이드는 가이드라인 섹션에서 이미 제공되므로 제거)
 
     // 챌린지별 힌트 메시지
-    let hint1 = challenge.description
-    let hint2 = ''
+    let hint1 = ''
 
     if (challenge.id === 'informative-image-banner') {
-      hint2 = '정보성 이미지는 alt 속성에 이미지가 전달하는 내용을 명확하게 작성해야 합니다. 예: "봄맞이 50% 할인 이벤트 배너"'
+      hint1 = '정보성 이미지는 alt 속성에 이미지에 실제로 보이는 텍스트만 정확히 전달해야 합니다. 이미지에는 "Spring Sale 50% OFF"가 표시되어 있습니다.'
     } else if (challenge.id === 'decorative-image-icon') {
-      hint2 = '버튼에 이미 텍스트("설정")가 있으므로, 아이콘 이미지는 장식용입니다. alt=""로 설정하여 중복 낭독을 방지하세요.'
+      hint1 = '버튼에 이미 텍스트("설정")가 있으므로, 아이콘 이미지는 장식용입니다. alt=""로 설정하여 중복 낭독을 방지하세요.'
     } else if (challenge.id === 'complex-image-chart') {
-      hint2 = '복잡한 이미지는 단순한 "차트"가 아닌 구체적인 수치와 정보를 포함해야 합니다. aria-describedby를 사용하여 상세 설명을 연결할 수도 있습니다.'
+      hint1 = '복잡한 이미지는 단순한 "차트"가 아닌 구체적인 수치와 정보를 포함해야 합니다. 차트에 표시된 연도와 금액 정보를 모두 포함하세요. aria-describedby를 사용하여 상세 설명을 연결할 수도 있습니다.'
     }
 
     return [
       {
         level: 1,
-        title: '기본 가이드',
-        content: hint1,
+        title: '문제 분석',
+        content: hint1 || '코드를 자세히 살펴보고 문제점을 찾아보세요.',
       },
       {
         level: 2,
-        title: '문제 분석',
-        content: hint2 || '코드를 자세히 살펴보고 문제점을 찾아보세요.',
-      },
-      {
-        level: 3,
         title: '정답 코드',
         content: challenge.solutionCode,
       },
