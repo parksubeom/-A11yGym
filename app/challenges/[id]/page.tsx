@@ -241,7 +241,7 @@ ${challenge.description}
                 <TabsContent value="render" className="mt-3">
                   <PreviewPanel
                     code={previewCode}
-                    assets={(challenge as { assets?: Array<{ type: string; url: string; altDescription?: string }> })?.assets}
+                    assets={challenge.assets}
                   />
                 </TabsContent>
                   <TabsContent value="result" className="mt-3">
@@ -307,7 +307,7 @@ ${challenge.description}
                   <TabsContent value="render" className="mt-3">
                     <PreviewPanel
                       code={previewCode}
-                      assets={(challenge as { assets?: Array<{ type: string; url: string; altDescription?: string }> })?.assets}
+                      assets={challenge.assets}
                     />
                   </TabsContent>
 

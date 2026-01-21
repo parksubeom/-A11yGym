@@ -3,7 +3,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import type { Guideline } from '@/constants/kwcag-guidelines'
-import type { Challenge } from '@/constants/sample-challenges'
+import type { Challenge } from '@/types/challenge'
+import { getWcagCodeFromChecklistId } from '@/constants/kwcag-mapping'
 
 // ============================================================================
 // 타입 정의
@@ -13,6 +14,17 @@ export interface ChallengeDetail extends Challenge {
   id: string
   createdAt?: string
   updatedAt?: string
+}
+
+/**
+ * UI 노출용 Guideline 타입
+ * - `code`: UI에 보여줄 표준 코드(가능하면 WCAG/KWCAG 성공기준 코드)
+ * - `internalCode`: 내부 CSV 기반 체크리스트 id(1~33)
+ */
+export type GuidelineView = Guideline & {
+  internalCode: string
+  code: string
+  wcagCode: string | null
 }
 
 export interface UserProgress {
@@ -58,7 +70,7 @@ export const queryKeys = {
  * 캐싱 적용: staleTime 5분
  */
 export function useGuidelines() {
-  return useQuery<Guideline[], Error>({
+  return useQuery<GuidelineView[], Error>({
     queryKey: queryKeys.guidelines,
     queryFn: async () => {
       const { data, error } = await supabase
@@ -70,7 +82,36 @@ export function useGuidelines() {
         throw new Error(`지침 목록 조회 실패: ${error.message}`)
       }
 
-      return (data as Guideline[]) || []
+      const rows = ((data as Guideline[]) || []).map((g) => {
+        const wcagCode = getWcagCodeFromChecklistId(g.code)
+        return {
+          ...g,
+          internalCode: g.code,
+          wcagCode,
+          // UI 기본 표시는 표준 코드 우선(없으면 기존 id 유지)
+          code: wcagCode ?? g.code,
+        }
+      })
+
+      // UI 정렬: 표준 코드가 있으면 표준 코드 기준, 없으면 내부 id 숫자 기준
+      rows.sort((a, b) => {
+        const aKey = a.wcagCode ?? a.internalCode
+        const bKey = b.wcagCode ?? b.internalCode
+
+        // "1.1.1" 형태는 문자열 비교가 부정확할 수 있으니 숫자 토큰 비교
+        const parse = (v: string) => v.split('.').map((x) => Number(x))
+        const aParts = parse(aKey)
+        const bParts = parse(bKey)
+        const len = Math.max(aParts.length, bParts.length)
+        for (let i = 0; i < len; i++) {
+          const av = aParts[i] ?? 0
+          const bv = bParts[i] ?? 0
+          if (av !== bv) return av - bv
+        }
+        return 0
+      })
+
+      return rows
     },
     staleTime: 5 * 60 * 1000, // 5분
     gcTime: 10 * 60 * 1000, // 10분 (구 cacheTime)
