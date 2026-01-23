@@ -9,6 +9,7 @@ import { Home } from 'lucide-react'
 
 import { CodeEditor } from '@/components/CodeEditor'
 import { HintPanel, type HintLevel } from '@/components/HintPanel'
+import { generateHintForChallenge } from '@/utils/generate-hints'
 import { PreviewPanel } from '@/components/PreviewPanel'
 import { SAMPLE_CHALLENGES } from '@/constants/sample-challenges'
 import type { Challenge } from '@/types/challenge'
@@ -123,22 +124,14 @@ ${challenge.description}
     // 2단계 힌트 시스템: 1=문제 분석, 2=정답 코드 전체
     // (기본 가이드는 가이드라인 섹션에서 이미 제공되므로 제거)
 
-    // 챌린지별 힌트 메시지 (방향성만 제시)
-    let hint1 = ''
-
-    if (challenge.id === 'informative-image-banner') {
-      hint1 = '정보성 이미지의 경우, alt 속성에는 이미지에 포함된 중요한 정보를 전달해야 합니다. 이미지에 어떤 텍스트나 정보가 보이는지 확인해보세요.'
-    } else if (challenge.id === 'decorative-image-icon') {
-      hint1 = '이미지가 단순히 장식 목적이고, 주변에 동일한 정보를 전달하는 텍스트가 있다면 어떻게 처리해야 할까요?'
-    } else if (challenge.id === 'complex-image-chart') {
-      hint1 = '복잡한 데이터 시각화(차트, 그래프 등)의 경우, 단순한 설명만으로는 충분하지 않을 수 있습니다. 어떤 정보를 포함해야 사용자가 데이터를 이해할 수 있을까요?'
-    }
+    // CSV 기반 구체적인 힌트 생성
+    const hint1 = generateHintForChallenge(challenge)
 
     return [
       {
         level: 1,
         title: '문제 분석',
-        content: hint1 || '코드를 자세히 살펴보고 문제점을 찾아보세요.',
+        content: hint1,
       },
       {
         level: 2,

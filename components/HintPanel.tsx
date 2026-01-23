@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 import { Lightbulb } from 'lucide-react'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import {
   Accordion,
   AccordionContent,
@@ -100,7 +102,9 @@ function HintAccordionItem({ hint, isOpen }: HintAccordionItemProps) {
                   <code>{hint.content}</code>
                 </pre>
               ) : (
-                <p>{hint.content}</p>
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  {hint.content}
+                </ReactMarkdown>
               )}
             </div>
           )}
