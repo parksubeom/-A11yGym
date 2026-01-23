@@ -51,6 +51,12 @@ function validateSolution(challenge: Challenge, code: string) {
     'keyboard-clickable-div',
     'form-label-missing',
     'skip-link-missing',
+    'contrast-low-text',
+    'focus-outline-removed',
+    'link-text-ambiguous',
+    'duplicate-id',
+    'table-header-missing',
+    'color-only-required',
   ]
   
   if (supportedIds.includes(challenge.id)) {
@@ -61,7 +67,13 @@ function validateSolution(challenge: Challenge, code: string) {
         | 'complex-image-chart'
         | 'keyboard-clickable-div'
         | 'form-label-missing'
-        | 'skip-link-missing',
+        | 'skip-link-missing'
+        | 'contrast-low-text'
+        | 'focus-outline-removed'
+        | 'link-text-ambiguous'
+        | 'duplicate-id'
+        | 'table-header-missing'
+        | 'color-only-required',
       code
     )
     return {

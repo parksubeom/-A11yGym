@@ -188,4 +188,170 @@ export const SAMPLE_CHALLENGES: readonly Challenge[] = [
   <p>여기가 본문입니다.</p>
 </main>`,
   },
+  {
+    id: 'contrast-low-text',
+    kwcagCode: '1.4.3',
+    title: '텍스트 대비 부족 (저대비 본문)',
+    description:
+      '텍스트와 배경 간의 명도 대비가 충분하지 않으면 저시력 사용자와 모바일 환경에서 읽기 어렵습니다. 본문 텍스트의 대비를 4.5:1 이상이 되도록 조정해보세요.',
+    difficulty: 'medium',
+    environment: 'html',
+    initialCode: `<article class="notice">
+  <h2 style="color:#111111;">업데이트 안내</h2>
+  <p style="color:#9ca3af; background:#ffffff;">
+    오늘 20:00~21:00 동안 점검이 진행됩니다. 이용에 참고해 주세요.
+  </p>
+</article>`,
+    highlightLines: [3, 5],
+    solutionCode: `<article class="notice">
+  <h2 style="color:#111111;">업데이트 안내</h2>
+  <p style="color:#111111; background:#ffffff;">
+    오늘 20:00~21:00 동안 점검이 진행됩니다. 이용에 참고해 주세요.
+  </p>
+</article>`,
+  },
+  {
+    id: 'focus-outline-removed',
+    kwcagCode: '2.4.7',
+    title: '포커스 표시 제거 (focus:outline-none)',
+    description:
+      '키보드 사용자는 포커스 표시를 통해 “현재 어디에 있는지”를 파악합니다. 포커스 아웃라인을 제거했다면, 대체 포커스 스타일을 제공해야 합니다.',
+    difficulty: 'medium',
+    environment: 'react',
+    initialCode: `<div className="toolbar">
+  <button className="px-3 py-2 rounded-md bg-primary text-primary-foreground focus:outline-none">
+    저장
+  </button>
+</div>`,
+    highlightLines: [2],
+    solutionCode: `<div className="toolbar">
+  <button className="px-3 py-2 rounded-md bg-primary text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+    저장
+  </button>
+</div>`,
+  },
+  {
+    id: 'link-text-ambiguous',
+    kwcagCode: '2.4.4',
+    title: '모호한 링크 텍스트 (더보기 반복)',
+    description:
+      '여러 링크가 같은 텍스트(예: “더보기”)를 가지면 스크린 리더 사용자가 목적지를 구분하기 어렵습니다. 링크 텍스트만으로 목적을 이해할 수 있게 만들어보세요.',
+    difficulty: 'medium',
+    environment: 'html',
+    initialCode: `<section class="articles">
+  <h2>공지사항</h2>
+  <ul>
+    <li>
+      <span class="title">서비스 점검 안내</span>
+      <a href="/notice/maintenance">더보기</a>
+    </li>
+    <li>
+      <span class="title">개인정보 처리방침 변경</span>
+      <a href="/notice/privacy">더보기</a>
+    </li>
+  </ul>
+</section>`,
+    highlightLines: [6, 12],
+    solutionCode: `<section class="articles">
+  <h2>공지사항</h2>
+  <ul>
+    <li>
+      <span class="title">서비스 점검 안내</span>
+      <a href="/notice/maintenance">서비스 점검 안내 더보기</a>
+    </li>
+    <li>
+      <span class="title">개인정보 처리방침 변경</span>
+      <a href="/notice/privacy">개인정보 처리방침 변경 더보기</a>
+    </li>
+  </ul>
+</section>`,
+  },
+  {
+    id: 'duplicate-id',
+    kwcagCode: '4.1.1',
+    title: '중복 id로 인한 마크업 오류 (label 연결 깨짐)',
+    description:
+      '한 페이지 안에서 id 값은 중복되면 안 됩니다. id 중복은 레이블 연결, 스크린 리더 탐색, 자동완성 등에 문제를 만들 수 있습니다.',
+    difficulty: 'medium',
+    environment: 'html',
+    initialCode: `<form class="profile">
+  <label for="email">이메일</label>
+  <input id="email" type="email" />
+
+  <label for="email">이메일 확인</label>
+  <input id="email" type="email" />
+</form>`,
+    highlightLines: [2, 7],
+    solutionCode: `<form class="profile">
+  <label for="email">이메일</label>
+  <input id="email" type="email" />
+
+  <label for="emailConfirm">이메일 확인</label>
+  <input id="emailConfirm" type="email" />
+</form>`,
+  },
+  {
+    id: 'table-header-missing',
+    kwcagCode: '1.3.1',
+    title: '표 헤더 미제공 (th/scope 누락)',
+    description:
+      '데이터 테이블은 제목 셀과 내용 셀의 관계를 명확히 해야 합니다. <th>와 scope를 사용해 헤더를 제공하세요.',
+    difficulty: 'hard',
+    environment: 'html',
+    initialCode: `<table class="price-table">
+  <caption>요금 안내</caption>
+  <tr>
+    <td>플랜</td>
+    <td>월 요금</td>
+  </tr>
+  <tr>
+    <td>Basic</td>
+    <td>9,900원</td>
+  </tr>
+</table>`,
+    highlightLines: [3, 6],
+    solutionCode: `<table class="price-table">
+  <caption>요금 안내</caption>
+  <thead>
+    <tr>
+      <th scope="col">플랜</th>
+      <th scope="col">월 요금</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">Basic</th>
+      <td>9,900원</td>
+    </tr>
+  </tbody>
+</table>`,
+  },
+  {
+    id: 'color-only-required',
+    kwcagCode: '1.4.1',
+    title: '색상만으로 필수 항목 표시 (필수 안내 누락)',
+    description:
+      '필수 입력을 빨간색(*)만으로 표시하면 색각 이상 사용자나 스크린 리더 사용자에게 정보가 전달되지 않을 수 있습니다. 색상 외 수단(텍스트/숨김 텍스트 등)으로 필수 여부를 제공하세요.',
+    difficulty: 'hard',
+    environment: 'html',
+    initialCode: `<form class="checkout">
+  <style>
+    .required { color: #ef4444; font-weight: 700; }
+  </style>
+  <label for="name">이름 <span class="required">*</span></label>
+  <input id="name" />
+</form>`,
+    highlightLines: [5],
+    solutionCode: `<form class="checkout">
+  <style>
+    .required { color: #ef4444; font-weight: 700; }
+    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+  </style>
+  <label for="name">
+    이름 <span class="required" aria-hidden="true">*</span>
+    <span class="sr-only">(필수)</span>
+  </label>
+  <input id="name" />
+</form>`,
+  },
 ] as const
