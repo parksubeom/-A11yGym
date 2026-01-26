@@ -11,6 +11,7 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { ArrowRight, CheckCircle2 } from 'lucide-react'
+import { formatGuidelineDisplay } from '@/utils/guideline-helper'
 
 const difficultyColors = {
   easy: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400 border-emerald-200',
@@ -86,7 +87,7 @@ export default function Home() {
                   {challenge.title}
                 </CardTitle>
                 <CardDescription className="font-mono text-xs text-primary/80 bg-primary/5 inline-block px-2 py-1 rounded mt-2">
-                  KWCAG {challenge.kwcagCode}
+                  {formatGuidelineDisplay(challenge.kwcagCode, { showId: true, showWcagCode: true })}
                 </CardDescription>
               </CardHeader>
               
