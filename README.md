@@ -59,6 +59,7 @@ npm run dev
 - `npm run build` - 프로덕션 빌드
 - `npm run start` - 프로덕션 서버 실행
 - `npm run lint` - ESLint 실행
+- `npm run seed` - Supabase 데이터 시딩
 
 ## 절대 경로 설정
 
@@ -77,3 +78,18 @@ import { KWCAG_LEVELS } from '@/constants/kwcag'
 ```bash
 npx shadcn@latest add [component-name]
 ```
+
+## 접근성 기능
+
+이 프로젝트는 웹 접근성 학습을 위한 플랫폼입니다.
+
+### 주요 기능
+
+- **실시간 접근성 검사**: PreviewPanel에서 `axe-core`를 사용한 실시간 접근성 이슈 탐지
+- **챌린지 기반 학습**: 실제 웹 개발에서 자주 발생하는 접근성 문제를 다루는 실전 챌린지
+- **ESLint 통합**: 개발 단계 접근성 검증 (`eslint-plugin-jsx-a11y`)
+
+### 관련 문서
+
+- [axe-core 검사 규칙](docs/17-axe-core-detection-rules.md)
+- [색 대비 검사 원리](docs/16-color-contrast-detection-principle.md)

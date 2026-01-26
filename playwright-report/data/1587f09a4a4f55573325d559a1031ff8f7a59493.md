@@ -1,0 +1,145 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - generic [ref=e5]:
+      - generic [ref=e6]: v1.0 Beta · Web Accessibility Training
+      - heading "웹 접근성, 실전 코드로 확실하게 익히세요." [level=1] [ref=e7]:
+        - text: 웹 접근성, 실전 코드로
+        - text: 확실하게 익히세요.
+      - paragraph [ref=e8]: 이론만으로는 부족합니다. 잘못된 코드를 직접 수정하고, 실시간 피드백을 받으며 '접근성 근육'을 키워보세요.
+      - button "가이드 보기" [ref=e10] [cursor=pointer]:
+        - link "가이드 보기" [ref=e11]:
+          - /url: /guide
+    - generic [ref=e12]:
+      - generic [ref=e13]:
+        - generic [ref=e14]:
+          - heading "추천 챌린지" [level=2] [ref=e15]
+          - paragraph [ref=e16]: 가장 빈번하게 발생하는 웹 접근성 이슈들을 모았습니다.
+        - button "전체 보기" [ref=e17] [cursor=pointer]:
+          - text: 전체 보기
+          - img
+      - generic [ref=e18]:
+        - generic [ref=e19]:
+          - generic [ref=e20]:
+            - generic [ref=e22]: 쉬움
+            - generic [ref=e23]: 정보성 이미지 대체 텍스트 누락 (이벤트 배너)
+            - generic [ref=e24]: KWCAG 1.1.1
+          - paragraph [ref=e26]: 의미를 가진 이미지에는 대체 텍스트(alt)가 필요합니다. 이벤트 배너나 프로모션 이미지는 사용자에게 중요한 정보를 전달하므로, alt 속성에 이미지가 전달하는 내용을 명확하게 작성해야 합니다.
+          - link "도전하기" [ref=e28] [cursor=pointer]:
+            - /url: /challenges/informative-image-banner
+            - text: 도전하기
+            - img
+        - generic [ref=e29]:
+          - generic [ref=e30]:
+            - generic [ref=e32]: 쉬움
+            - generic [ref=e33]: 장식용 이미지 중복 낭독 (아이콘)
+            - generic [ref=e34]: KWCAG 1.1.1
+          - paragraph [ref=e36]: 장식용 이미지는 스크린 리더에서 읽히지 않아야 합니다. 버튼이나 링크 안에 텍스트가 이미 있는 경우, 아이콘 이미지의 alt는 빈 문자열(alt="")로 설정하여 중복 낭독을 방지해야 합니다.
+          - link "도전하기" [ref=e38] [cursor=pointer]:
+            - /url: /challenges/decorative-image-icon
+            - text: 도전하기
+            - img
+        - generic [ref=e39]:
+          - generic [ref=e40]:
+            - generic [ref=e42]: 보통
+            - generic [ref=e43]: 복잡한 이미지 정보 부족 (차트)
+            - generic [ref=e44]: KWCAG 1.1.1
+          - paragraph [ref=e46]: 복잡한 이미지(차트, 그래프, 다이어그램 등)는 단순한 alt 텍스트만으로는 충분하지 않을 수 있습니다. 구체적인 수치와 데이터를 포함하거나, aria-describedby를 사용하여 상세 설명을 연결해야 합니다. **이 차트의 정보:** 이 이미지는 연도별 매출 막대 그래프를 보여줍니다. 2020년 1억원, 2021년 1.5억원, 2022년 2억원, 2023년 2.5억원으로 지속적인 성장 추세를 보입니다.
+          - link "도전하기" [ref=e48] [cursor=pointer]:
+            - /url: /challenges/complex-image-chart
+            - text: 도전하기
+            - img
+        - generic [ref=e49]:
+          - generic [ref=e50]:
+            - generic [ref=e52]: 쉬움
+            - generic [ref=e53]: 키보드 접근 불가 (div onClick)
+            - generic [ref=e54]: KWCAG 2.1.1
+          - paragraph [ref=e56]: 클릭 이벤트만 가진 div/span은 기본적으로 키보드 포커스를 받을 수 없습니다. 키보드 사용자가 동일한 기능을 사용할 수 있도록 적절한 역할(role)과 포커스(tabIndex)를 제공해야 합니다.
+          - link "도전하기" [ref=e58] [cursor=pointer]:
+            - /url: /challenges/keyboard-clickable-div
+            - text: 도전하기
+            - img
+        - generic [ref=e59]:
+          - generic [ref=e60]:
+            - generic [ref=e62]: 쉬움
+            - generic [ref=e63]: 폼 레이블 누락 (input label)
+            - generic [ref=e64]: KWCAG 3.3.2
+          - paragraph [ref=e66]: 입력 필드는 스크린 리더 사용자가 용도를 이해할 수 있도록 레이블이 필요합니다. <label for="...">와 <input id="...">를 연결해 주세요.
+          - link "도전하기" [ref=e68] [cursor=pointer]:
+            - /url: /challenges/form-label-missing
+            - text: 도전하기
+            - img
+        - generic [ref=e69]:
+          - generic [ref=e70]:
+            - generic [ref=e72]: 쉬움
+            - generic [ref=e73]: 반복 영역 건너뛰기 링크 누락 (Skip link)
+            - generic [ref=e74]: KWCAG 2.4.1
+          - paragraph [ref=e76]: 반복되는 영역(헤더/내비게이션)을 건너뛰고 본문으로 바로 이동할 수 있는 “본문 바로가기” 링크를 제공해야 합니다.
+          - link "도전하기" [ref=e78] [cursor=pointer]:
+            - /url: /challenges/skip-link-missing
+            - text: 도전하기
+            - img
+        - generic [ref=e79]:
+          - generic [ref=e80]:
+            - generic [ref=e82]: 보통
+            - generic [ref=e83]: 텍스트 대비 부족 (저대비 본문)
+            - generic [ref=e84]: KWCAG 1.4.3
+          - paragraph [ref=e86]: 텍스트와 배경 간의 명도 대비가 충분하지 않으면 저시력 사용자와 모바일 환경에서 읽기 어렵습니다. 본문 텍스트의 대비를 4.5:1 이상이 되도록 조정해보세요.
+          - link "도전하기" [ref=e88] [cursor=pointer]:
+            - /url: /challenges/contrast-low-text
+            - text: 도전하기
+            - img
+        - generic [ref=e89]:
+          - generic [ref=e90]:
+            - generic [ref=e92]: 보통
+            - generic [ref=e93]: 포커스 표시 제거 (focus:outline-none)
+            - generic [ref=e94]: KWCAG 2.4.7
+          - paragraph [ref=e96]: 키보드 사용자는 포커스 표시를 통해 “현재 어디에 있는지”를 파악합니다. 포커스 아웃라인을 제거했다면, 대체 포커스 스타일을 제공해야 합니다.
+          - link "도전하기" [ref=e98] [cursor=pointer]:
+            - /url: /challenges/focus-outline-removed
+            - text: 도전하기
+            - img
+        - generic [ref=e99]:
+          - generic [ref=e100]:
+            - generic [ref=e102]: 보통
+            - generic [ref=e103]: 모호한 링크 텍스트 (더보기 반복)
+            - generic [ref=e104]: KWCAG 2.4.4
+          - paragraph [ref=e106]: "여러 링크가 같은 텍스트(예: “더보기”)를 가지면 스크린 리더 사용자가 목적지를 구분하기 어렵습니다. 링크 텍스트만으로 목적을 이해할 수 있게 만들어보세요."
+          - link "도전하기" [ref=e108] [cursor=pointer]:
+            - /url: /challenges/link-text-ambiguous
+            - text: 도전하기
+            - img
+        - generic [ref=e109]:
+          - generic [ref=e110]:
+            - generic [ref=e112]: 보통
+            - generic [ref=e113]: 중복 id로 인한 마크업 오류 (label 연결 깨짐)
+            - generic [ref=e114]: KWCAG 4.1.1
+          - paragraph [ref=e116]: 한 페이지 안에서 id 값은 중복되면 안 됩니다. id 중복은 레이블 연결, 스크린 리더 탐색, 자동완성 등에 문제를 만들 수 있습니다.
+          - link "도전하기" [ref=e118] [cursor=pointer]:
+            - /url: /challenges/duplicate-id
+            - text: 도전하기
+            - img
+        - generic [ref=e119]:
+          - generic [ref=e120]:
+            - generic [ref=e122]: 어려움
+            - generic [ref=e123]: 표 헤더 미제공 (th/scope 누락)
+            - generic [ref=e124]: KWCAG 1.3.1
+          - paragraph [ref=e126]: 데이터 테이블은 제목 셀과 내용 셀의 관계를 명확히 해야 합니다. <th>와 scope를 사용해 헤더를 제공하세요.
+          - link "도전하기" [ref=e128] [cursor=pointer]:
+            - /url: /challenges/table-header-missing
+            - text: 도전하기
+            - img
+        - generic [ref=e129]:
+          - generic [ref=e130]:
+            - generic [ref=e132]: 어려움
+            - generic [ref=e133]: 색상만으로 필수 항목 표시 (필수 안내 누락)
+            - generic [ref=e134]: KWCAG 1.4.1
+          - paragraph [ref=e136]: 필수 입력을 빨간색(*)만으로 표시하면 색각 이상 사용자나 스크린 리더 사용자에게 정보가 전달되지 않을 수 있습니다. 색상 외 수단(텍스트/숨김 텍스트 등)으로 필수 여부를 제공하세요.
+          - link "도전하기" [ref=e138] [cursor=pointer]:
+            - /url: /challenges/color-only-required
+            - text: 도전하기
+            - img
+  - alert [ref=e139]
+```
