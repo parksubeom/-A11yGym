@@ -124,9 +124,9 @@ export default function GuidePage() {
                         {detail.example && (
                           <div className="space-y-1.5 pt-2 border-t">
                             <p className="text-xs font-medium text-foreground">예시:</p>
-                            <code className="text-xs bg-muted px-2 py-1 rounded block overflow-x-auto">
-                              {detail.example}
-                            </code>
+                            <pre className="text-xs bg-muted px-2 py-1.5 rounded block overflow-x-auto font-mono">
+                              <code>{detail.example}</code>
+                            </pre>
                           </div>
                         )}
                         
