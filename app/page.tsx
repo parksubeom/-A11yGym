@@ -39,7 +39,7 @@ export default function Home() {
             </h1>
             <p className="text-lg text-muted-foreground sm:text-xl max-w-2xl mx-auto break-keep leading-relaxed">
               이론만으로는 부족합니다. 잘못된 코드를 직접 수정하고, 
-              실시간 피드백을 받으며 '접근성 근육'을 키워보세요.
+              실시간 피드백을 받으며 &apos;접근성 근육&apos;을 키워보세요.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4 pt-4">
               <Button size="lg" className="h-12 px-8 text-base font-medium shadow-lg shadow-primary/20">
