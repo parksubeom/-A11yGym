@@ -79,6 +79,24 @@ import { KWCAG_LEVELS } from '@/constants/kwcag'
 npx shadcn@latest add [component-name]
 ```
 
+## 배포
+
+### Vercel 배포
+
+이 프로젝트는 Vercel에 배포할 수 있습니다.
+
+#### 빠른 배포
+
+1. [Vercel](https://vercel.com)에 GitHub 계정으로 로그인
+2. **"Add New Project"** 클릭
+3. GitHub 저장소 선택
+4. 환경 변수 설정:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+5. **"Deploy"** 클릭
+
+자세한 배포 가이드는 [Vercel 배포 가이드](docs/24-vercel-deployment-guide.md)를 참고하세요.
+
 ## 접근성 기능
 
 이 프로젝트는 웹 접근성 학습을 위한 플랫폼입니다.
