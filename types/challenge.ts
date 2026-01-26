@@ -37,8 +37,11 @@ export interface Challenge {
   id: string
   
   /**
-   * KWCAG/WCAG Success Criteria 코드
-   * 예: "1.1.1", "2.1.1", "3.3.2"
+   * KWCAG 내부 체크리스트 ID
+   * 예: "1", "29", "32"
+   * 
+   * 이 ID를 통해 한글 제목과 WCAG 코드를 가져올 수 있습니다.
+   * @see utils/guideline-helper.ts
    */
   kwcagCode: string
   

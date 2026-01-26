@@ -15,6 +15,7 @@ import { SAMPLE_CHALLENGES } from '@/constants/sample-challenges'
 import type { Challenge } from '@/types/challenge'
 import { useAppStore } from '@/store/useAppStore'
 import { validateChallenge } from '@/lib/validator'
+import { formatGuidelineDisplay } from '@/utils/guideline-helper'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -123,9 +124,10 @@ export default function ChallengePage() {
 
   const guideMarkdown = useMemo(() => {
     if (!challenge) return ''
+    const guidelineText = formatGuidelineDisplay(challenge.kwcagCode, { showId: true, showWcagCode: true })
     return `## ${challenge.title}
 
-**가이드라인:** \`${challenge.kwcagCode}\`
+**가이드라인:** ${guidelineText}
 
 ${challenge.description}
 `
@@ -193,7 +195,9 @@ ${challenge.description}
           </Button>
           <div className="min-w-0">
             <h1 className="truncate text-lg font-semibold">{challenge.title}</h1>
-            <p className="text-sm text-muted-foreground">가이드라인: {challenge.kwcagCode}</p>
+            <p className="text-sm text-muted-foreground">
+              가이드라인: {formatGuidelineDisplay(challenge.kwcagCode, { showId: true, showWcagCode: true })}
+            </p>
           </div>
         </div>
         <div className="flex shrink-0 items-center gap-2">
