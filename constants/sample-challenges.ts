@@ -188,4 +188,152 @@ export const SAMPLE_CHALLENGES: readonly Challenge[] = [
   <p>여기가 본문입니다.</p>
 </main>`,
   },
+  {
+    id: 'low-contrast-text',
+    kwcagCode: '8',
+    title: '텍스트 명도 대비 부족 (Low Contrast)',
+    description:
+      '텍스트와 배경 간의 명도 대비는 최소 4.5:1 이상이어야 합니다(WCAG AA 기준). 회색 텍스트와 흰 배경의 조합은 대비가 부족하여 저시력 사용자나 색각 이상 사용자가 읽기 어렵습니다. 색상 값을 조정하여 충분한 대비를 제공해주세요.\n\n**현재 대비:** 약 2.8:1 (부족)\n**목표 대비:** 4.5:1 이상',
+    difficulty: 'medium',
+    environment: 'html',
+    initialCode: `<article className="notice">
+  <h2>공지사항</h2>
+  <p style="color: #999999; background-color: #FFFFFF;">
+    정기 점검이 2024년 2월 10일 오전 2시부터 4시까지 진행됩니다.
+  </p>
+</article>`,
+    highlightLines: [3],
+    solutionCode: `<article className="notice">
+  <h2>공지사항</h2>
+  <p style="color: #595959; background-color: #FFFFFF;">
+    정기 점검이 2024년 2월 10일 오전 2시부터 4시까지 진행됩니다.
+  </p>
+</article>`,
+  },
+  {
+    id: 'heading-structure-skip',
+    kwcagCode: '18',
+    title: '헤딩 순서 오류 (Heading Structure)',
+    description:
+      '헤딩(h1~h6)은 논리적 순서를 따라야 합니다. h1 다음에 바로 h3를 사용하면 스크린 리더 사용자가 문서 구조를 이해하기 어렵습니다. h1 → h2 → h3 순서로 단계를 건너뛰지 않아야 합니다.',
+    difficulty: 'easy',
+    environment: 'html',
+    initialCode: `<div className="blog-post">
+  <h1>웹 접근성 가이드</h1>
+  <h3>대체 텍스트란?</h3>
+  <p>이미지의 의미를 텍스트로 전달하는 것입니다.</p>
+  <h3>키보드 접근성이란?</h3>
+  <p>마우스 없이도 모든 기능을 사용할 수 있어야 합니다.</p>
+</div>`,
+    highlightLines: [3, 5],
+    solutionCode: `<div className="blog-post">
+  <h1>웹 접근성 가이드</h1>
+  <h2>대체 텍스트란?</h2>
+  <p>이미지의 의미를 텍스트로 전달하는 것입니다.</p>
+  <h2>키보드 접근성이란?</h2>
+  <p>마우스 없이도 모든 기능을 사용할 수 있어야 합니다.</p>
+</div>`,
+  },
+  {
+    id: 'table-structure-missing-header',
+    kwcagCode: '3',
+    title: '표 구조 - 헤더 셀 누락 (Table Headers)',
+    description:
+      '표는 <th> 요소로 헤더 셀을 명시해야 하며, scope 속성으로 행/열을 구분해야 합니다. 스크린 리더가 셀의 의미를 이해하고 사용자에게 정확히 전달할 수 있도록 합니다.',
+    difficulty: 'medium',
+    environment: 'html',
+    initialCode: `<table>
+  <caption>2024년 분기별 매출 현황</caption>
+  <tr>
+    <td>분기</td>
+    <td>매출액</td>
+    <td>증감률</td>
+  </tr>
+  <tr>
+    <td>1분기</td>
+    <td>500만원</td>
+    <td>+10%</td>
+  </tr>
+  <tr>
+    <td>2분기</td>
+    <td>550만원</td>
+    <td>+15%</td>
+  </tr>
+</table>`,
+    highlightLines: [3, 4, 5, 6],
+    solutionCode: `<table>
+  <caption>2024년 분기별 매출 현황</caption>
+  <thead>
+    <tr>
+      <th scope="col">분기</th>
+      <th scope="col">매출액</th>
+      <th scope="col">증감률</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">1분기</th>
+      <td>500만원</td>
+      <td>+10%</td>
+    </tr>
+    <tr>
+      <th scope="row">2분기</th>
+      <td>550만원</td>
+      <td>+15%</td>
+    </tr>
+  </tbody>
+</table>`,
+  },
+  {
+    id: 'vague-link-text',
+    kwcagCode: '19',
+    title: '모호한 링크 텍스트 (Vague Link)',
+    description:
+      '링크 텍스트는 그 자체로 목적지나 기능을 이해할 수 있어야 합니다. "여기", "클릭", "더보기" 같은 모호한 텍스트는 스크린 리더 사용자가 링크 목록을 탐색할 때 맥락을 알 수 없습니다. 구체적인 텍스트나 aria-label로 명확히 표현해주세요.',
+    difficulty: 'easy',
+    environment: 'react',
+    initialCode: `<article className="article-card">
+  <h3>웹 접근성 최신 뉴스</h3>
+  <p>2024년부터 적용되는 새로운 KWCAG 지침에 대해 알아봅니다.</p>
+  <a href="/news/kwcag-2024">여기를 클릭하세요</a>
+</article>`,
+    highlightLines: [4],
+    solutionCode: `<article className="article-card">
+  <h3>웹 접근성 최신 뉴스</h3>
+  <p>2024년부터 적용되는 새로운 KWCAG 지침에 대해 알아봅니다.</p>
+  <a href="/news/kwcag-2024">KWCAG 2024 지침 자세히 보기</a>
+</article>`,
+  },
+  {
+    id: 'language-missing',
+    kwcagCode: '25',
+    title: '페이지 언어 속성 누락 (Language Attribute)',
+    description:
+      'HTML 문서는 lang 속성으로 주 언어를 명시해야 합니다. 스크린 리더가 올바른 발음과 억양으로 콘텐츠를 읽을 수 있도록 합니다. 한국어 콘텐츠는 lang="ko"를 사용해주세요.',
+    difficulty: 'easy',
+    environment: 'html',
+    initialCode: `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>접근성 가이드</title>
+</head>
+<body>
+  <h1>웹 접근성이란?</h1>
+  <p>모든 사람이 웹을 이용할 수 있도록 하는 것입니다.</p>
+</body>
+</html>`,
+    highlightLines: [2],
+    solutionCode: `<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>접근성 가이드</title>
+</head>
+<body>
+  <h1>웹 접근성이란?</h1>
+  <p>모든 사람이 웹을 이용할 수 있도록 하는 것입니다.</p>
+</body>
+</html>`,
+  },
 ] as const
