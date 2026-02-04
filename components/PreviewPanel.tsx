@@ -137,6 +137,29 @@ async function waitForStable(doc: Document) {
   ])
 }
 
+async function waitForDomReady(
+  getDoc: () => Document | null | undefined,
+  opts?: { timeoutMs?: number; intervalMs?: number }
+) {
+  const timeoutMs = opts?.timeoutMs ?? 2500
+  const intervalMs = opts?.intervalMs ?? 50
+  const start = Date.now()
+
+  // "document.write 직후"에는 readyState/body가 아직 준비되지 않은 타이밍이 있어 polling으로 방어
+  while (Date.now() - start < timeoutMs) {
+    const doc = getDoc()
+    if (doc?.documentElement && doc.body) {
+      const ready = doc.readyState === 'complete' || doc.readyState === 'interactive'
+      const hasNodes = Boolean(doc.body.firstChild)
+      if (ready && hasNodes) return
+    }
+    await new Promise<void>((r) => setTimeout(r, intervalMs))
+  }
+
+  // 타임아웃 시에도 마지막 doc를 반환하지 않고, 호출부에서 에러 메시지를 제어하도록 throw
+  throw new Error('iframe DOM 준비 시간이 초과되었습니다. 코드를 다시 실행해주세요.')
+}
+
 export function PreviewPanel({ code, assets, className }: PreviewPanelProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const [error, setError] = useState<ErrorInfo | null>(null)
@@ -217,6 +240,12 @@ export function PreviewPanel({ code, assets, className }: PreviewPanelProps) {
         const win = iframe.contentWindow
         if (!doc || !win) throw new Error('iframe에 접근할 수 없습니다.')
 
+        // DOM 준비 상태 방어 (간헐적 axe 실패/누락 방지)
+        await waitForDomReady(() => iframe.contentDocument || iframe.contentWindow?.document, {
+          timeoutMs: 3000,
+          intervalMs: 50,
+        })
+
         injectHighlightStyles(doc)
         clearHighlights(doc)
         await waitForStable(doc)
@@ -254,6 +283,7 @@ export function PreviewPanel({ code, assets, className }: PreviewPanelProps) {
 
         const v = (results.violations || []) as unknown as AxeIssue[]
         setIssues(v)
+        setAnalysisError(null)
 
         // 표시용 마킹(최대 40개)
         let marked = 0
@@ -338,7 +368,7 @@ export function PreviewPanel({ code, assets, className }: PreviewPanelProps) {
                   ref={iframeRef}
                   title="코드 미리보기"
                   className="h-full w-full border-0"
-                  sandbox="allow-scripts allow-same-origin"
+                  sandbox="allow-scripts allow-same-origin allow-modals"
                   aria-label="사용자가 작성한 코드의 렌더링 결과를 표시합니다"
                 />
               )}

@@ -59,6 +59,7 @@ npm run dev
 - `npm run build` - 프로덕션 빌드
 - `npm run start` - 프로덕션 서버 실행
 - `npm run lint` - ESLint 실행
+- `npm run seed` - Supabase 데이터 시딩
 
 ## 절대 경로 설정
 
@@ -77,3 +78,36 @@ import { KWCAG_LEVELS } from '@/constants/kwcag'
 ```bash
 npx shadcn@latest add [component-name]
 ```
+
+## 배포
+
+### Vercel 배포
+
+이 프로젝트는 Vercel에 배포할 수 있습니다.
+
+#### 빠른 배포
+
+1. [Vercel](https://vercel.com)에 GitHub 계정으로 로그인
+2. **"Add New Project"** 클릭
+3. GitHub 저장소 선택
+4. 환경 변수 설정:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+5. **"Deploy"** 클릭
+
+자세한 배포 가이드는 [Vercel 배포 가이드](docs/24-vercel-deployment-guide.md)를 참고하세요.
+
+## 접근성 기능
+
+이 프로젝트는 웹 접근성 학습을 위한 플랫폼입니다.
+
+### 주요 기능
+
+- **실시간 접근성 검사**: PreviewPanel에서 `axe-core`를 사용한 실시간 접근성 이슈 탐지
+- **챌린지 기반 학습**: 실제 웹 개발에서 자주 발생하는 접근성 문제를 다루는 실전 챌린지
+- **ESLint 통합**: 개발 단계 접근성 검증 (`eslint-plugin-jsx-a11y`)
+
+### 관련 문서
+
+- [axe-core 검사 규칙](docs/17-axe-core-detection-rules.md)
+- [색 대비 검사 원리](docs/16-color-contrast-detection-principle.md)
