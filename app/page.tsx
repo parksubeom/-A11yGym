@@ -14,9 +14,9 @@ import { ArrowRight, CheckCircle2 } from 'lucide-react'
 import { formatGuidelineDisplay } from '@/utils/guideline-helper'
 
 const difficultyColors = {
-  easy: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400 border-emerald-200',
-  medium: 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400 border-amber-200',
-  hard: 'bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-400 border-rose-200',
+  easy: 'bg-emerald-100 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800',
+  medium: 'bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-300 border-amber-200 dark:border-amber-800',
+  hard: 'bg-rose-100 text-rose-900 dark:bg-rose-950 dark:text-rose-300 border-rose-200 dark:border-rose-800',
 }
 
 const difficultyLabels = {
@@ -43,7 +43,7 @@ export default function Home() {
               실시간 피드백을 받으며 &apos;접근성 근육&apos;을 키워보세요.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4 pt-4">
-              <Button size="lg" className="h-12 px-8 text-base font-medium shadow-lg shadow-primary/20">
+              <Button asChild size="lg" className="h-12 px-8 text-base font-medium shadow-lg shadow-primary/20">
                 <Link href="/guide">가이드 보기</Link>
               </Button>
             </div>
@@ -52,7 +52,7 @@ export default function Home() {
       </section>
 
       {/* Challenge Grid Section */}
-      <section className="container mx-auto px-4 py-16">
+      <section id="challenges" className="container mx-auto px-4 py-16">
         <div className="mb-10 flex flex-col md:flex-row items-center justify-between gap-4">
           <div>
             <h2 className="text-2xl font-bold tracking-tight">추천 챌린지</h2>
@@ -60,17 +60,18 @@ export default function Home() {
               가장 빈번하게 발생하는 웹 접근성 이슈들을 모았습니다.
             </p>
           </div>
-          <Button variant="ghost" className="text-primary gap-1">
-            전체 보기 <ArrowRight className="h-4 w-4" />
+          <Button asChild variant="ghost" className="text-primary gap-1">
+            <Link href="#challenges" aria-label="모든 챌린지 보기">
+              전체 보기 <ArrowRight className="h-4 w-4" />
+            </Link>
           </Button>
         </div>
 
         <div className="grid gap-6 xs:grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
-          {SAMPLE_CHALLENGES.map((challenge, index) => (
+          {SAMPLE_CHALLENGES.map((challenge) => (
             <Card
               key={challenge.id}
               className="flex flex-col h-full transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border-slate-200 dark:border-slate-800"
-              style={{ animationDelay: `${index * 100}ms` }}
             >
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between gap-2 mb-2">
